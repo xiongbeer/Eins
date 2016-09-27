@@ -9,12 +9,10 @@ import numpy as np
 
 class Road(object):
     'Road && Cars'
-    autoAdderSwitch = False
-    autoAdderV = 0
 
     def __init__(self, locate_, vBox_, vmax_, length_, view_ = 80, voffset_ = 2.7, negvoffset_ = 1.2,
                 target_ = 0.0, lanes_ = 1, enterCars_ = 0, leaverCars_ = 0, alpha_ = 0.6,
-                 beta_ = 0.2, frames_ = 1, enterFlag_ = False):
+                 beta_ = 0.2, frames_ = 1, enterFlag_ = False, connectRoad_ = None):
         self.enterCars = enterCars_             #进入此路的车辆数
         self.leaverCars = leaverCars_           #离开此路的车辆数
         self.locate = locate_                   #各个车在此路的位置
@@ -34,9 +32,11 @@ class Road(object):
         self.alpha = alpha_                     #减速概率的alpha因子,不能随意修改,除非你知道自己在干什么
         self.beta = beta_                       #减速概率的beta因子,同上
         self.voffset = voffset_/frames_                  #基于帧数和加速度的位移,frames_为帧数
-        self.negvoffset = negvoffset_/frames_           #基于帧数和减速度的位移(非最大紧急减速度,请根据实际情况调整)
+        self.negvoffset = negvoffset_/frames_            #基于帧数和减速度的位移(非最大紧急减速度,请根据实际情况调整)
         self.frames = frames_
-
+        self.autoAdderSwitch = False            #是否自动添加车辆
+        self.autoAdderV = 0                     #自动添加车辆的初始速度
+        self.connectRoad = connectRoad_         #连接的公路(入口),默认值为空
     #标记线内的函数由用户根据情况自行使用
     #-----------------------------------------------------
     def getCarsV(self):
@@ -47,7 +47,10 @@ class Road(object):
         return self.lanes
     def getEndCarsNum(self):
         return self.endCarsV.size
-
+    def getRoadLength(self):
+        return self.length+self.target
+    def getRoadVMax(self):
+        return self.vmax
     #减少需要进入其他道路车辆的计数,并且返回那辆车的速度
     def reduceEndCars(self):
         v = self.endCarsV[0]
@@ -91,10 +94,15 @@ class Road(object):
                     laneVCounter += 1
                 #到达尽头后移除车辆,增加endCarsV的值，代表有车需要进入其他道路
                 if self.locate[lane][-1] >= self.length + self.target:
+                    leaveV = self.vBox[lane][-1]
                     self.endCarsV = np.append(self.endCarsV, self.vBox[lane][-1])
                     self.vBox[lane] = np.delete(self.vBox[lane], -1)
                     self.locate[lane] = np.delete(self.locate[lane], -1)
                     self.leaverCars += 1
+                    #如果出口连接了其他的道路,则自动将离开的车加入其入口
+                    if self.connectRoad != None:
+                        self.connectRoad.addCar(leaveV)
+                        self.leaverCars -= 1
 
                     #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                     if self.autoAdderSwitch == True:
@@ -126,11 +134,17 @@ class Road(object):
     #清空离开道路车辆数的计数
     def reLeave(self):
         self.leaverCars = 0
-
+    
+    #自动添加车辆(每离开一辆就添加一辆)
     def evenAddAutomaticVehicleSwitch(self, switch, v):
         self.autoAdderSwitch = switch
         self.autoAdderV = v
-
+    #TODO 未完成
+    #按时间间隔添加车辆,与前一个冲突
+    def AddAutomaticByTime(self, timeStep):
+        pass
+    def setConnectTo(self, road):
+        self.connectRoad = road
     #---------------------------------------------------
 
     #计算实时随机减速概率
