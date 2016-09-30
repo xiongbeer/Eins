@@ -3,9 +3,11 @@
 
 #优化工作: 0%
 #GUI: 0%
-#TODO:同一道路不同车道上速度始终相等
 
 import numpy as np
+
+locateEmpty = np.array([-1])
+vBoxEmpty   = np.array([0])
 
 class Road(object):
     'Road && Cars'
@@ -35,8 +37,12 @@ class Road(object):
         self.negvoffset = negvoffset_/frames_            #基于帧数和减速度的位移(非最大紧急减速度,请根据实际情况调整)
         self.frames = frames_
         self.autoAdderSwitch = False            #是否自动添加车辆
+        self.autoAdderByTime = False            #是否按时间自动添加车辆,与前一个Flag冲突
         self.autoAdderV = 0                     #自动添加车辆的初始速度
         self.connectRoad = connectRoad_         #连接的公路(入口),默认值为空
+        self.autoAddTime = 0                    #用户定义的自动添加车辆的时间间隔
+        self.timeCounter = 0                    #系统内部用于自动添加车辆的时间计数器
+        self.wholeTime = 0                      #总的运行时间
     #标记线内的函数由用户根据情况自行使用
     #-----------------------------------------------------
     def getCarsV(self):
@@ -61,6 +67,7 @@ class Road(object):
     def reflushStatus(self):
         currentV = 0.0      #用于统计当前道路平均车速
         laneVCounter = 0
+        self.timer()
         #每个车道分别计算,也就是车不会中途改变车道
         for lane in xrange(0,self.lanes):
             slowVic = np.random.random(self.locate[lane].size)
@@ -107,7 +114,12 @@ class Road(object):
                     #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                     if self.autoAdderSwitch == True:
                         self.addCar(self.autoAdderV)
-
+        
+        #如果有需要,按时间添加车辆的LOOP
+        if self.autoAdderByTime == True:
+            if self.autoAddTime == self.timer(get = True):
+                self.timer(reset = True)
+                self.addCar(self.autoAdderV)
         #如果有车就统计平均车速
         if laneVCounter != 0:
             self.meanV = np.append(self.meanV, [currentV/laneVCounter])
@@ -137,16 +149,34 @@ class Road(object):
     
     #自动添加车辆(每离开一辆就添加一辆)
     def evenAddAutomaticVehicleSwitch(self, switch, v):
-        self.autoAdderSwitch = switch
-        self.autoAdderV = v
-    #TODO 未完成
+        if self.autoAdderByTime != True:
+            self.autoAdderSwitch = switch
+            self.autoAdderV = v
+        else:
+            print 'Set add car automatic failed,there alreadly existed another mode'
+
     #按时间间隔添加车辆,与前一个冲突
-    def AddAutomaticByTime(self, timeStep):
-        pass
+    def addCarAutomaticByTime(self, switch, v, timeStep):
+        if self.autoAdderSwitch != True:
+            self.autoAdderByTime = switch
+            self.autoAdderV = v
+            if timeStep != 0:
+                self.autoAddTime = timeStep
+            else:
+                print 'timeStep cannot be zero'
+        else:
+            print 'Set add car automatic by time failed,there alreadly existed another mode'
     def setConnectTo(self, road):
         self.connectRoad = road
     #---------------------------------------------------
-
+    def timer(self, get = False,reset = False):
+        self.wholeTime += 1
+        if get == True:
+            return self.timeCounter
+        if reset == True:
+            self.timeCounter = 0
+        else:
+            self.timeCounter += 1
     #计算实时随机减速概率
     def pCounter(self, carsNum, v, dview, vmax):
         A = (carsNum/dview)**self.alpha
@@ -176,9 +206,10 @@ class Road(object):
 
 
 #在指定长度上初始化指定数量的车辆,可以指定分布,默认线性均匀分布
-def initCarsDistributed(length, carsNum, distributed = 'linear'):
+def initCarsDistributed(length, carsNum, initV, distributed = 'linear'):
     if distributed == 'linear':
         cars = np.array(sorted(np.random.random(carsNum)*length))
-        return cars
+        v = np.array([initV]*cars.size)
+        return cars, v
     else:
         print 'No such distributed'
