@@ -34,7 +34,7 @@
     **acc(default = True)**:车的加速度.  
     **negacc(default = True)**:车的减速度(非最大减速).  
 
-> Road(object)--基类 -->  
+> Road(object) --基类 -->  
 >> Parameters:  
     **self.carBox(default = False) = carBox_**:#道路上所有车辆及其具体状态和参数  
     **self.enterCars(default = False) = enterCars_**:进入此路的车辆数  
@@ -85,7 +85,8 @@
 视野范围、最大速度、当前测速、两个指数参数分别为: \\(\delta. V_{max}. v_i. \alpha. \beta.\\)  
 随机减速概率: \\(\mathnormal{p}=\rho_l^\alpha(v_i(t)/V_{max})^\beta\\)  
 其中局部密度: \\(\rho_l=1/\delta(\sum_{r=i+1}^{i+\delta})\eta(r)\\)  
-\\(\eta(r)\\) 为布尔量,有车占据此细胞则为1,否则为0  
+$$\eta(r)$$  
+为布尔量,有车占据此细胞则为1,否则为0  
 两个指数参数的值需要使用者自己给定(可以依据公路实际数据或者化为最优化问题来解得)  
 
 参考论文: ZHU Liu-hua,KONG Ling-jiang,LIU Mu-ren. Investigation of an Improved Nagel-Schreckenberg Traffic Flow Model ,China Guangxi Sciences 2007,14(3):253~256
