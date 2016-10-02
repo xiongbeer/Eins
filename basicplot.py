@@ -33,7 +33,6 @@ class RoadPlot(object):
 
     def plot(self, color_ = False, reflush_ = True):
         if reflush_:   
-            #self.road = road_                                               #更新要显示车道的信息
             self.scat.set_offsets(self.getPlotInfo()) 
             if color_:                                                      #如果color_为True,则会根据车辆的当前速度与最大速度为其绘制颜色        
                 self.scat.set_edgecolors(self.getColorMap())
