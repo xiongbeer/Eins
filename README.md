@@ -1,19 +1,4 @@
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    jax: ["input/TeX", "output/HTML-CSS"],
-    tex2jax: {
-        inlineMath: [ ['$', '$'] ],
-        displayMath: [ ['$$', '$$']],
-        processEscapes: true,
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    messageStyle: "none",
-    "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 # Improved-Nagel-Schreckenberg-Traffic-Simulation/NS模型交通仿真
 
 
@@ -37,7 +22,7 @@ MathJax.Hub.Config({
 2.绘图模块  
 3.统计模块  
 ###道路模块
-> Car()--结构体 --> 用于构造运行的车辆  
+> Car() --结构体 --> 用于构造运行的车辆  
 >> Parameters:   
     **name(default = True)**:车的名称(类别),可帮助细化统计分类.  
     **length(default = True)**:车的长度,是决定车距的参数之一.  
@@ -97,20 +82,10 @@ MathJax.Hub.Config({
 在实际生活中,司机无缘无故的减速概率并不会很高,应该说非常**低**  
 这里采用**动态减速概率**,基于司机的**视野距离内车的数目**和**当前自身车速**  
 计算公式为:  
-    * 视野范围、最大速度、当前测速、两个指数参数分别为: $\delta. V_{max}. v_i. \alpha. \beta.$  
-    * 随机减速概率: 
-$$
-\mathnormal{p}=\rho_l^\alpha(v_i(t)/V_{max})^\beta
-$$
-    * 其中局部密度: 
-$$
-\rho_l=1/\delta(\sum_{r=i+1}^{i+\delta})\eta(r)">
-$$
-    * 
-$$
-src="http://www.forkosh.com/mathtex.cgi? \eta(r)
-$$ 
-为布尔量,有车占据此细胞则为1,否则为0  
+    * 视野范围、最大速度、当前测速、两个指数参数分别为: \\(\delta. V_{max}. v_i. \alpha. \beta.\\)  
+    * 随机减速概率: \\(\mathnormal{p}=\rho_l^\alpha(v_i(t)/V_{max})^\beta\\)  
+    * 其中局部密度: \\(\rho_l=1/\delta(\sum_{r=i+1}^{i+\delta})\eta(r)\\)  
+    * \\(\eta(r)\\) 为布尔量,有车占据此细胞则为1,否则为0  
 
     * 两个指数参数的值需要使用者自己给定(可以依据公路实际数据或者化为最优化问题来解得)  
 
