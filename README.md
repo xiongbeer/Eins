@@ -1,10 +1,26 @@
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+        inlineMath: [ ['$', '$'] ],
+        displayMath: [ ['$$', '$$']],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    messageStyle: "none",
+    "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
 # Improved-Nagel-Schreckenberg-Traffic-Simulation/NS模型交通仿真
 
 
 ## 目录
-*[项目介绍](#项目介绍)
-*[使用向导](#使用向导)
-*[算法原理](#算法原理)
+* [项目介绍](#项目介绍)  
+* [使用向导](#使用向导)  
+* [算法原理](#算法原理)  
 
 <a name="项目介绍"></a>
 ## 项目介绍
@@ -16,44 +32,46 @@
 
 <a name="使用向导"></a>
 ##使用向导
-目前整体分为三大部分: 1.道路模块 2.绘图模块 3.统计模块
+目前整体分为三大部分:   
+1.道路模块  
+2.绘图模块  
+3.统计模块  
 ###道路模块
-> Car()--结构体 --> 用于构造运行的车辆
->> Parameters: 
-    **name(default = True)**:车的名称(类别),可帮助细化统计分类.
-    **length(default = True)**:车的长度,是决定车距的参数之一.
-    **vDistance(default = True)**:真实最小车距,是决定车距的参数之一.
-    **v(default = True)**:当前速度.
-    **view(default = True)**:车的视野距离,影响随机减速因子.
-    **locate(default = True)**:车在道路上的原始一维坐标.
-    **height(default = True)**:车的高度.
-    **acc(default = True)**:车的加速度.
-    **negacc(default = True)**:车的减速度(非最大减速).
+> Car()--结构体 --> 用于构造运行的车辆  
+>> Parameters:   
+    **name(default = True)**:车的名称(类别),可帮助细化统计分类.  
+    **length(default = True)**:车的长度,是决定车距的参数之一.  
+    **vDistance(default = True)**:真实最小车距,是决定车距的参数之一.  
+    **v(default = True)**:当前速度.  
+    **view(default = True)**:车的视野距离,影响随机减速因子.  
+    **locate(default = True)**:车在道路上的原始一维坐标.  
+    **height(default = True)**:车的高度.  
+    **acc(default = True)**:车的加速度.  
+    **negacc(default = True)**:车的减速度(非最大减速).  
 
-> Road(object)--基类 -->
->> Parameters:
-    **self.carBox(default = False) = carBox_**:#道路上所有车辆及其具体状态和参数
-    **self.enterCars(default = False) = enterCars_**:进入此路的车辆数
-    **self.vmax(default = False) = vmax_**:道路最大车速
-    **self.length(default = False) = length_**:道路长度
-    **self.target(default = True) = target_**:追加长度,一般取0就可以了
-    **self.lanes(default = True) = lanes_**:车道数,默认为单车道
-    **self.laneFlag(default = True) = 0**:标记当前操作的车道号
-    **self.endCars(default = True) = np.array([])**:list的长度表示有多少车辆需要进入其他道路,键值为其速度
-    **self.enterFlag(default = True) = enterFlag_**:标记此道是否是入口,如果非入口,初始化车辆必须要有一个哨兵车辆(v = -1.0 locate = 0.0) 
-
-    **self.alpha(default = True) = alpha_**:减速概率的alpha因子,不能随意修改,除非你知道自己在干什么
-    **self.bet(default = True)a = beta_**:减速概率的beta因子,同上
-    **self.autoAdderSwitch(default = True) = False**:是否自动添加车辆
-    **self.autoAdderByTime(default = True) = False**:是否按时间自动添加车辆,与前一个Flag冲突
-    **self.autoAdder(default = False) = None**:自动添加车辆的初始速度
-    **self.connectRoad(default = True) = connectRoad_**:连接的公路(入口),默认值为空
-    **self.autoAddTime(default = True) = 0**:用户定义的自动添加车辆的时间间隔
-    **self.timeCounter(default = True) = 0**:系统内部用于自动添加车辆的时间计数器
-    **self.wholeTime(default = True) = 0**:总的运行时间
-	**self.leaveCars(default = True) = [0]*lanes_**:离开此路的车辆数
->> func:
-	--待更新
+> Road(object)--基类 -->  
+>> Parameters:  
+    **self.carBox(default = False) = carBox_**:#道路上所有车辆及其具体状态和参数  
+    **self.enterCars(default = False) = enterCars_**:进入此路的车辆数  
+    **self.vmax(default = False) = vmax_**:道路最大车速  
+    **self.length(default = False) = length_**:道路长度  
+    **self.target(default = True) = target_**:追加长度,一般取0就可以了  
+    **self.lanes(default = True) = lanes_**:车道数,默认为单车道  
+    **self.laneFlag(default = True) = 0**:标记当前操作的车道号  
+    **self.endCars(default = True) = np.array([])**:list的长度表示有多少车辆需要进入其他道路,键值为其速度  
+    **self.enterFlag(default = True) = enterFlag_**:标记此道是否是入口,如果非入口,初始化车辆必须要有一个哨兵车辆(v = -1.0 locate = 0.0)   
+    **self.alpha(default = True) = alpha_**:减速概率的alpha因子,不能随意修改,除非你知道自己在干什么  
+    **self.bet(default = True)a = beta_**:减速概率的beta因子,同上  
+    **self.autoAdderSwitch(default = True) = False**:是否自动添加车辆  
+    **self.autoAdderByTime(default = True) = False**:是否按时间自动添加车辆,与前一个Flag冲突  
+    **self.autoAdder(default = False) = None**:自动添加车辆的初始速度  
+    **self.connectRoad(default = True) = connectRoad_**:连接的公路(入口),默认值为空  
+    **self.autoAddTime(default = True) = 0**:用户定义的自动添加车辆的时间间隔  
+    **self.timeCounter(default = True) = 0**:系统内部用于自动添加车辆的时间计数器  
+    **self.wholeTime(default = True) = 0**:总的运行时间  
+	**self.leaveCars(default = True) = [0]*lanes_**:离开此路的车辆数  
+>> func:  
+	--待更新  
 
 <a name="算法原理"></a>
 ##算法原理
@@ -77,12 +95,23 @@
 ####模型改进
 原模型有个很大的缺陷,就是司机的减速概率是**定值随机的**  
 在实际生活中,司机无缘无故的减速概率并不会很高,应该说非常**低**  
-这里采用**动态减速概率**,基于司机的**视野距离内车的数目**和**当前自身车速**
-计算公式为:
-    * 视野范围、最大速度、当前测速、两个指数参数分别为:<img src="http://www.forkosh.com/mathtex.cgi? \delta. V_{max}. v_i. \alpha. \beta. ">
-    * 随机减速概率: <img src="http://www.forkosh.com/mathtex.cgi? \mathnormal{p}=\rho_l^\alpha(v_i(t)/V_{max})^\beta">
-    * 其中局部密度: <img src="http://www.forkosh.com/mathtex.cgi? \rho_l=1/\delta(\sum_{r=i+1}^{i+\delta})\eta(r)">
-    * <img src="http://www.forkosh.com/mathtex.cgi? \eta(r)"> 为布尔量,有车占据此细胞则为1,否则为0
-    * 两个指数参数的值需要使用者自己给定(可以依据公路实际数据或者化为最优化问题来解得)
+这里采用**动态减速概率**,基于司机的**视野距离内车的数目**和**当前自身车速**  
+计算公式为:  
+    * 视野范围、最大速度、当前测速、两个指数参数分别为: $\delta. V_{max}. v_i. \alpha. \beta.$  
+    * 随机减速概率: 
+$$
+\mathnormal{p}=\rho_l^\alpha(v_i(t)/V_{max})^\beta
+$$
+    * 其中局部密度: 
+$$
+\rho_l=1/\delta(\sum_{r=i+1}^{i+\delta})\eta(r)">
+$$
+    * 
+$$
+src="http://www.forkosh.com/mathtex.cgi? \eta(r)
+$$ 
+为布尔量,有车占据此细胞则为1,否则为0  
+
+    * 两个指数参数的值需要使用者自己给定(可以依据公路实际数据或者化为最优化问题来解得)  
 
 参考论文: ZHU Liu-hua,KONG Ling-jiang,LIU Mu-ren. Investigation of an Improved Nagel-Schreckenberg Traffic Flow Model ,China Guangxi Sciences 2007,14(3):253~256
