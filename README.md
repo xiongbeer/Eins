@@ -36,26 +36,28 @@
 |    **negacc(default = True)**:|				车的减速度(非最大减速).|
 
 > **Road**(object) --基类 -->  
->> **Parameters**:  
-    **self.carBox(default = False) = carBox_**:				道路上所有车辆及其具体状态和参数  
-    **self.enterCars(default = False) = enterCars_**:		进入此路的车辆数  
-    **self.vmax(default = False) = vmax_**:					道路最大车速  
-    **self.length(default = False) = length_**:				道路长度  
-    **self.target(default = True) = target_**:				追加长度,一般取0就可以了  
-    **self.lanes(default = True) = lanes_**:				车道数,默认为单车道  
-    **self.laneFlag(default = True) = 0**:					标记当前操作的车道号  
-    **self.endCars(default = True) = np.array([])**:		list的长度表示有多少车辆需要进入其他道路,键值为其速度  
-    **self.enterFlag(default = True) = enterFlag_**:		标记此道是否是入口,如果非入口,初始化车辆必须要有一个哨兵车辆(v = -1.0 locate = 0.0)   
-    **self.alpha(default = True) = alpha_**:				减速概率的alpha因子,不能随意修改,除非你知道自己在干什么  
-    **self.beta(default = True) = beta_**:					减速概率的beta因子,同上  
-    **self.autoAdderSwitch(default = True) = False**:		是否自动添加车辆  
-    **self.autoAdderByTime(default = True) = False**:		是否按时间自动添加车辆,与前一个Flag冲突  
-    **self.autoAdder(default = False) = None**:				自动添加车辆的初始速度  
-    **self.connectRoad(default = True) = connectRoad_**:	连接的公路(入口),默认值为空  
-    **self.autoAddTime(default = True) = 0**:				用户定义的自动添加车辆的时间间隔  
-    **self.timeCounter(default = True) = 0**:				系统内部用于自动添加车辆的时间计数器  
-    **self.wholeTime(default = True) = 0**:					总的运行时间  
-	**self.leaveCars(default = True) = [0]*lanes_**:		离开此路的车辆数  
+
+|**Parameters**:|**说明**|
+| :-------: | :--------- |
+|    **self.carBox(default = False) = carBox_**:|				道路上所有车辆及其具体状态和参数|
+|    **self.enterCars(default = False) = enterCars_**:|		进入此路的车辆数|
+|    **self.vmax(default = False) = vmax_**:|				道路最大车速|
+|    **self.length(default = False) = length_**:|			道路长度|
+|    **self.target(default = True) = target_**:|			追加长度,一般取0就可以了|
+|    **self.lanes(default = True) = lanes_**:|			车道数,默认为单车道|
+|    **self.laneFlag(default = True) = 0**:|			标记当前操作的车道号|
+|    **self.endCars(default = True) = np.array([])**:|	list的长度表示有多少车辆需要进入其他道路,键值为其速度|
+|    **self.enterFlag(default = True) = enterFlag_**:|	标记此道是否是入口,如果非入口,初始化车辆必须要有一个哨兵车辆(v = -1.0 locate = 0.0) |
+|    **self.alpha(default = True) = alpha_**:|		减速概率的alpha因子,不能随意修改,除非你知道自己在干什么|
+|    **self.beta(default = True) = beta_**:|		减速概率的beta因子,同上|
+|    **self.autoAdderSwitch(default = True) = False**:|	是否自动添加车辆|
+|    **self.autoAdderByTime(default = True) = False**:|		是否按时间自动添加车辆,与前一个Flag冲突|
+|    **self.autoAdder(default = False) = None**:|		自动添加车辆的初始速度|
+|    **self.connectRoad(default = True) = connectRoad_**:|	连接的公路(入口),默认值为空|
+|    **self.autoAddTime(default = True) = 0**:|	用户定义的自动添加车辆的时间间隔|
+|    **self.timeCounter(default = True) = 0**:|		系统内部用于自动添加车辆的时间计数器|
+|    **self.wholeTime(default = True) = 0**:|			总的运行时间|
+|	**self.leaveCars(default = True) = [0]*lanes_**|	离开此路的车辆数|
 ---
 >> **func**:  
 	--待更新  
