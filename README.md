@@ -22,16 +22,18 @@
 3.统计模块  
 ###道路模块
 > **Car**() --结构体 --> 用于构造运行的车辆  
->> **Parameters**:   
-    **name(default = True)**:				车的名称(类别),可帮助细化统计分类.  
-    **length(default = True)**:				车的长度,是决定车距的参数之一.  
-    **vDistance(default = True)**:			真实最小车距,是决定车距的参数之一.  
-    **v(default = True)**:					当前速度.  
-    **view(default = True)**:				车的视野距离,影响随机减速因子.  
-    **locate(default = True)**:				车在道路上的原始一维坐标.  
-    **height(default = True)**:				车的高度.  
-    **acc(default = True)**:				车的加速度.  
-    **negacc(default = True)**:				车的减速度(非最大减速).  
+
+|**Parameters**:|**说明**|
+| :-------: | :--------- |
+|    **name(default = True)**:|				车的名称(类别),可帮助细化统计分类.|
+|    **length(default = True)**:|				车的长度,是决定车距的参数之一.|
+|    **vDistance(default = True)**:|			真实最小车距,是决定车距的参数之一.
+|    **v(default = True)**:|					当前速度.|
+|    **view(default = True)**:|				车的视野距离,影响随机减速因子.|
+|    **locate(default = True)**:|				车在道路上的原始一维坐标.|
+|    **height(default = True)**:|				车的高度.|
+|    **acc(default = True)**:|				车的加速度.|
+|    **negacc(default = True)**:|				车的减速度(非最大减速).|
 
 > **Road**(object) --基类 -->  
 >> **Parameters**:  
@@ -54,6 +56,7 @@
     **self.timeCounter(default = True) = 0**:				系统内部用于自动添加车辆的时间计数器  
     **self.wholeTime(default = True) = 0**:					总的运行时间  
 	**self.leaveCars(default = True) = [0]*lanes_**:		离开此路的车辆数  
+---
 >> **func**:  
 	--待更新  
 
