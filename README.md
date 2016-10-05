@@ -47,20 +47,21 @@ carTemp.v = vmax * 0.5
 InitCar = br.initCarsDistributed(1000, carTemp, [vmax * 0.5] * carsNum, carsNum, lanes=2)
 
 if __name__ == '__main__':
-		#定义并初始化两条道路
-    rd = br.Road(InitCar, vmax, 1000, enterFlag_=True, lanes_=2)
-    rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
-		#将rd与rd2连接起来(rd的出口连向rd2的入口)
-		rd.setConnectTo(rd2)
-		#打开rd的边界条件
-    rd.addCarAutomaticByTime(True, carTemp, 2)
-		#导入要绘制的道路
-		bp.addRoad(np.array([0, 50]), np.array([50, 50]), rd)
-    bp.addRoad(np.array([60, 90]), np.array([50, 50]), rd2)
-		#开始动态绘图
-		bp.plot()
+	#定义并初始化两条道路
+	rd = br.Road(InitCar, vmax, 1000, enterFlag_=True,lanes_=2)
+	rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
+	#将rd与rd2连接起来(rd的出口连向rd2的入口)
+	rd.setConnectTo(rd2)
+	#打开rd的边界条件
+	rd.addCarAutomaticByTime(True, carTemp, 2)
+	#导入要绘制的道路
+	bp.addRoad(np.array([0, 50]), np.array([50, 50]), rd)
+	bp.addRoad(np.array([60, 90]), np.array([50, 50]), rd2)
+	#开始动态绘图
+	bp.plot()
 
 ```
+
 #### 运行结果
 最初的状态:
 ![exp2](/Source/exp_2.png)
@@ -69,6 +70,7 @@ if __name__ == '__main__':
 * 黄: vmax*0.2 < v <= vmax*0.6
 * 绿: v > vmax*0.6
 也就是说,红色和黄色的聚集地代表了道路不通畅的地方,绿色代表了车辆流畅通行  
+
 ![exp](/Source/exp.png)
 运行一段时间后,道路变为了全绿通行状态,这时说明道路可以平稳运行了.  
 <a name="使用向导"></a>
