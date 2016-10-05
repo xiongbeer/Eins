@@ -37,11 +37,11 @@
 #!/usr/bin/env python
 # coding=utf-8
 import numpy as np
-import basicroad as br				#导入道路模块
-import basicplot as bp				#导入绘图模块
-carsNum = 100 								#初始车的数量
-vmax = 16.7 									#道路的限速(m/s)
-carTemp = br.Car() 						#边界条件添加的车辆信息
+import basicroad as br	#导入道路模块
+import basicplot as bp	#导入绘图模块
+carsNum = 100			 #初始车的数量
+vmax = 16.7			   #道路的限速(m/s)
+carTemp = br.Car()		#边界条件添加的车辆信息
 carTemp.v = vmax * 0.5
 
 #获得初始化的车辆分布信息
@@ -70,6 +70,7 @@ if __name__ == '__main__':
 * 红: 0 <= v <= vmax*0.2
 * 黄: vmax*0.2 < v <= vmax*0.6
 * 绿: v > vmax*0.6
+
 也就是说,红色和黄色的聚集地代表了道路不通畅的地方,绿色代表了车辆流畅通行  
 
 ![exp](/Source/exp.png)
