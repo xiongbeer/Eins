@@ -1,5 +1,28 @@
 # Improved-Nagel-Schreckenberg-Traffic-Simulation/NS模型交通仿真
+# 代码结构将有大的调整,目前重心放在算法的扩充上,后期可视化预计用PyOpenGL/VisPy + PyQt4来构建.
 
+## TODOLIST
+** 下一次pus可能要比较久之后了,届时发布为Stable,敬请期待 **
+* 标准化周期性边界条件&开口边界性条件
+* 最原始的NS模型
+* Takayasu-Takayasu(TT)慢启动规则
+* BJH慢启动规则
+* VDR慢启动规则
+* 速度效应模型
+* 舒适驾驶(CD)模型
+* 改进舒适驾驶(MCD)模型
+* 同步流
+* KKW模型
+* Lee的考虑减速限制的模型
+* 鸣笛效应
+* 双车道模型
+* 多车道模型
+* 双向交通模型
+* BCA模型
+* EBCA模型
+* EBCA2模型
+* GBCA模型
+* CCA模型
 
 ## 目录
 * [项目介绍](#项目介绍)  

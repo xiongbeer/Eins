@@ -21,7 +21,6 @@ class Car(object):
         self.height = 0.0                   #汽车高度,暂时没用
 
 
-#TODO:-逻辑BUG-道路最前的车不会考虑要进入下一条车道最后一辆车的情况
 class Road(object):
     'Road && Cars'
 
