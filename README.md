@@ -1,4 +1,4 @@
-![](./Source/logo.png)
+![](./Source/logo-main.png)
 # Veins - Simulations of Traffic System Based on the Theory of Cellular Automaton
 
 ## 目录
