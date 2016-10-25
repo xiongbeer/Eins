@@ -19,20 +19,20 @@
 <a name="开发进度"></a>
 ## 开发进度  
 ### 绘图功能   
-<font color=green size=4>&radic;</font> &nbsp; 时空图  
-<font color=red size=4>X</font> &nbsp; 动态仿真
+![](./Source/T.png) &nbsp; 时空图  
+![](./Source/F.png) &nbsp;动态仿真
 
 
 ### 支持的模型
 #### 已完成
-<font color=green size=4>&radic;</font> &nbsp; 标准化周期性边界条件&开口边界性条件  
-<font color=green size=4>&radic;</font> &nbsp; 最原始的NS模型   
-<font color=green size=4>&radic;</font> &nbsp; Takayasu-Takayasu(TT)慢启动规则   
-<font color=green size=4>&radic;</font> &nbsp; BJH慢启动规则  
-<font color=green size=4>&radic;</font> &nbsp; VDR慢启动规则
+![](./Source/T.png) &nbsp; &nbsp; 标准化周期性边界条件&开口边界性条件  
+![](./Source/T.png) &nbsp; &nbsp; 最原始的NS模型   
+![](./Source/T.png) &nbsp; &nbsp; Takayasu-Takayasu(TT)慢启动规则   
+![](./Source/T.png) &nbsp; &nbsp; BJH慢启动规则  
+![](./Source/T.png) &nbsp; &nbsp; VDR慢启动规则
 #### 测试中
-<font color=orange size=4>&diams;</font> &nbsp; 舒适驾驶(CD)模型  
-<font color=orange size=4>&diams;</font> &nbsp; 改进舒适驾驶(MCD)模型
+![](./Source/p.png) &nbsp; &nbsp; 舒适驾驶(CD)模型  
+![](./Source/p.png) &nbsp; &nbsp; 改进舒适驾驶(MCD)模型
 #### 待开发
 * 速度效应模型
 * 同步流
@@ -49,9 +49,9 @@
 * CCA模型  
 
 ### 运行速度优化
-<font color=red size=4>X</font>  &nbsp; Pypy支持  
-<font color=red size=4>X</font>  &nbsp; Cpython支持  
-<font color=red size=4>X</font>  &nbsp; Hadoop支持  
+![](./Source/F.png) &nbsp; &nbsp; Pypy支持  
+![](./Source/F.png) &nbsp;  &nbsp; Cpython支持  
+![](./Source/F.png) &nbsp;  &nbsp; Hadoop支持  
 
 <a name="安装"></a>
 ## 安装
