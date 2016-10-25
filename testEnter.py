@@ -4,16 +4,31 @@ import numpy as np
 import basicroad as br
 import basicplot as bp
 import statistics as st
+plantime = 1200
 carsNum = 100
-vmax = 16.7
+vmax = 5
 carTemp = br.Car()
-carTemp.v = vmax * 0.5
-InitCar = br.initCarsDistributed(1000, carTemp, [vmax * 0.5] * carsNum, carsNum, lanes=2)
+carTemp.vDistance = 0
+carTemp.length = 1
+InitCar = br.initCarsDistributed(
+    1000, carTemp, [0] * carsNum, carsNum, lanes = 1)
 if __name__ == '__main__':
-    rd = br.Road(InitCar, vmax, 1000, enterFlag_=True, lanes_=2)
-    rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
-    rd.setConnectTo(rd2)
-    rd.addCarAutomaticByTime(True, carTemp, 2)
-    bp.addRoad(np.array([0, 50]), np.array([50, 50]), rd)
-    bp.addRoad(np.array([60, 90]), np.array([50, 50]), rd2)
-    bp.plot()
+    print 'Process start'
+    rd = br.NSRoad(InitCar, vmax, 1000, enterFlag_=True, lanes_=1)
+    #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
+    #rd.setConnectTo(rd2)
+    #rd.addCarAutomaticByTime(True, carTemp, 2)
+    rd.addCarAutomaticByBound(True, carTemp)
+    rd.setTT(True)
+    rdinfo = br.ProcessWriter(rd,'road2',plantime)
+    rdinfo.setInit()
+    counter = 0
+    for i in xrange(0,plantime):
+        counter += 1
+        if counter >= 10000:
+            print i*100.0/plantime,'%'
+            counter = 0
+        rd.reflushStatus()
+        rdinfo.writeInfo()
+    rdinfo.cleanAll()
+    print 'Done'
