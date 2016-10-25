@@ -31,7 +31,7 @@
 <font color=green size=4>&radic;</font> &nbsp; BJH慢启动规则  
 <font color=green size=4>&radic;</font> &nbsp; VDR慢启动规则
 #### 测试中
-<font color=orange size=4>&diams;</font> &nbsp; 舒适驾驶(CD)模型
+<font color=orange size=4>&diams;</font> &nbsp; 舒适驾驶(CD)模型  
 <font color=orange size=4>&diams;</font> &nbsp; 改进舒适驾驶(MCD)模型
 #### 待开发
 * 速度效应模型
