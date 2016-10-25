@@ -49,9 +49,9 @@
 * CCA模型  
 
 ### 运行速度优化
-<font color=red size=4>X</font>  &nbsp; Pypy支持
-<font color=red size=4>X</font>  &nbsp; Cpython支持
-<font color=red size=4>X</font>  &nbsp; Hadoop支持
+<font color=red size=4>X</font>  &nbsp; Pypy支持  
+<font color=red size=4>X</font>  &nbsp; Cpython支持  
+<font color=red size=4>X</font>  &nbsp; Hadoop支持  
 
 <a name="安装"></a>
 ## 安装
