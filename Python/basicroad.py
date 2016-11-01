@@ -27,7 +27,8 @@ class Car:
         self.negacc = 1.0                   #减速度/s
         self.view = 0                       #司机视野距离
         self.v = 0.0                        #当前速度
-        self.locate = 0.0                   #当前位置
+        self.locate = 0.0                   #当前所在位置
+        self.lane = 0                       #当前所在车道
         self.height = 0.0                   #汽车高度,暂时没用
         self.bn = False                     #刹车灯
         self.tst = 0                        #敏感时间
@@ -66,8 +67,8 @@ class Road(object):
         des = '\n车道数:'+str(self.lanes)+'\n道路长度:'+str(self.length+self.target)+'\n运行时间(/s):'+str(self.wholeTime)+'\n是否为入口:'+str(self.enterFlag)
         carsCounter = []
         for index, lane in enumerate(self.carBox):
-            carsCounter.append(lane.size)
-            des += '\n'+'车量-车道'+str(index)+':'+str(lane.size)
+            carsCounter.append(len(lane))
+            des += '\n'+'车量-车道'+str(index)+':'+str(len(lane))
         des += '\n'+'车总量:'+str(sum(carsCounter))
         return des
 
@@ -232,21 +233,29 @@ class Road(object):
     #抽象函数
     def reflushStatus(self):
         pass
-    
-    def reflushWaitLine(self, opLane):
-        waitLineLocate = []
-        laneLocate = []
-        for car in waitLine:
-            waitLineLocate.append(car.locate + car.length/2 + car.vDistance)
-            
-        for car in self.carBox[opLane]:
-            laneLocate.append(car.locate - car.length/2)
 
-        off = np.array(laneLocate) - np.array(waitLineLocate)
+    def reflushWaitLine(self, opLane):
+
+        if len(self.waitLine) != 0:
+            opCar = self.waitLine[0]
+            #车辆优先进入相同车道标号的车道
+            if opCar.lane == opLane:
+                if len(self.carBox[opLane]) != 0:
+                    if  self.carBox[opLane][0].locate - opCar.locate >= (opCar.length + self.carBox[opLane][0].length)/2 + opCar.vDistance:
+                        self.carBox[opLane].insert(0, opCar)
+                        del self.waitLine[0]
+                    else:
+                        pass
+                else:
+                    self.carBox[opLane].append(opCar)
+                    del self.waitLine[0]
+            else:
+                pass
+        else:
+            pass
 
     def addCar(self, car):
         car = copy.deepcopy(car)    #深复制一个对象(新建一辆车)
-        #增加新的车辆，每个车道分到车的概率相
         self.enterCars += 1
         self.waitLine.append(car)
 
@@ -267,14 +276,16 @@ class Road(object):
         if self.autoAdderSwitch != True:
             self.autoAdderByTime = switch
             self.autoAdder = car
-            if timeStep != 0:
+            if timeStep <= 0:
                 self.autoAddTime = timeStep
             else:
-                print 'timeStep cannot be zero'
+                print 'timeStep must bigger than ZERO'
         else:
             print 'Set add car automatic by time failed,there alreadly existed another mode'
+
     def setConnectTo(self, road):
         self.connectRoad = road
+
     #---------------------------------------------------
     def timer(self, get = False,reset = False):
         self.wholeTime += 1
@@ -292,6 +303,7 @@ class Road(object):
         else:
             number = 0
         return number
+
 class NSRoad(Road):
     def __init__(self, carBox_, vmax_, length_, target_ = 0.0, lanes_ = 1,
                  enterCars_ = 0, enterFlag_ = False, connectRoad_ = None):
@@ -344,7 +356,7 @@ class NSRoad(Road):
                     car.v = 0
         if self.BJHFlag or self.VDRFlag:
             car.stoped = False
-        
+
         #step2:减速
         if nextCar != None:
             dn = (car.length+nextCar.length)/2 + car.vDistance
@@ -373,27 +385,29 @@ class NSRoad(Road):
         self.timer()
         #每个车道分别计算,也就是车不会中途改变车道
         for lane in xrange(0,self.lanes):
-            if self.carBox[lane].size == 0:
+            if len(self.carBox[lane]) == 0:
                 continue
-            if self.carBox[lane].size >= 2:
-                for i in xrange(0, self.carBox[lane].size - 1):
+            if len(self.carBox[lane]) >= 2:
+                for i in xrange(0, len(self.carBox[lane]) - 1):
                     opCar = self.carBox[lane][i]
+                    opCar.lane = lane
                     nextCar = self.carBox[lane][i+1]
                     self.NS(opCar, nextCar)
             #最前的车单独计算
             opCar = self.carBox[lane][-1]
+            opCar.lane = lane
             nextCar = None
             if self.connectRoad != None:
                 opLane = self.connectRoad.getNextEnterLane()
                 info = self.connectRoad.getCarsInfo()
-                if info[opLane].size > 0:
+                if len(info[opLane]) > 0:
                     nextCar = info[opLane][0]
             self.NS(opCar, nextCar)
             #到达尽头后移除车辆,增加endCarsV的值，代表有车需要进入其他道路
             if opCar.locate >= self.length + self.target:
                 opCar.locate = 0.0
                 self.endCars = np.append(self.endCars, opCar)
-                self.carBox[lane] = np.delete(self.carBox[lane], -1)
+                del self.carBox[lane][-1]
                 self.leaveCars[lane] += 1
                 #如果出口连接了其他的道路,则自动将离开的车加入其入口
                 if self.connectRoad != None:
@@ -407,6 +421,7 @@ class NSRoad(Road):
             if self.autoAddTime == self.timer(get = True):
                 self.timer(reset = True)
                 self.addCar(self.autoAdder)
+
 class CDRoad(Road):
     def __init__(self, carBox_, vmax_, length_, target_ = 0.0, lanes_ = 1,
                  enterFlag_ = False, connectRoad_ = None,
@@ -468,10 +483,10 @@ class CDRoad(Road):
         for lane in xrange(0,self.lanes):
             tempVSaver = []
             tempLocateSaver = []
-            if self.carBox[lane].size == 0:
+            if len(self.carBox[lane]) == 0:
                 continue
-            if self.carBox[lane].size >= 2:
-                for i in xrange(0, self.carBox[lane].size - 1):
+            if len(self.carBox[lane]) >= 2:
+                for i in xrange(0, len(self.carBox[lane]) - 1):
                     opCar = self.carBox[lane][i]
                     nextCar = self.carBox[lane][i+1]
                     try:
@@ -488,9 +503,9 @@ class CDRoad(Road):
             if self.connectRoad != None:
                 opLane = self.connectRoad.getNextEnterLane()
                 info = self.connectRoad.getCarsInfo()
-                if info[opLane].size > 0:
+                if len(info[opLane]) > 0:
                     nextCar = info[opLane][0]
-                    if info[opLane].size > 1:
+                    if len(info[opLane]) > 1:
                         next2Car = info[opLane][1]
             v = self.CD(opCar, nextCar, next2Car)
             tempVSaver.append(v)
@@ -582,11 +597,11 @@ class MCDRoad(Road):
         self.timer()
         #每个车道分别计算,也就是车不会中途改变车道
         for lane in xrange(0,self.lanes):
-            if self.carBox[lane].size == 0:
+            if len(self.carBox[lane]) == 0:
                 continue
-            slowVic = np.random.random(self.carBox[lane].size)
-            if self.carBox[lane].size >= 2:
-                for i in xrange(0, self.carBox[lane].size - 1):
+            slowVic = np.random.random(len(self.carBox[lane]))
+            if len(self.carBox[lane]) >= 2:
+                for i in xrange(0, len(self.carBox[lane]) - 1):
                     opCar = self.carBox[lane][i]
                     nextCar = self.carBox[lane][i+1]
                     self.NS(opCar, nextCar)
@@ -596,7 +611,7 @@ class MCDRoad(Road):
             if self.connectRoad != None:
                 opLane = self.connectRoad.getNextEnterLane()
                 info = self.connectRoad.getCarsInfo()
-                if info[opLane].size > 0:
+                if len(info[opLane]) > 0:
                     nextCar = info[opLane][0]
             self.NS(opCar, nextCar)
             #到达尽头后移除车辆,增加endCarsV的值，代表有车需要进入其他道路
@@ -696,7 +711,7 @@ def initCarsDistributed(length, carTemplate, initV, carsNum, lanes = 1, dis = 'l
         for index, car in enumerate(carBox):
             car.locate = locate[index]
             car.v = initV[index]
-        output.append(np.array(carBox))
+        output.append(carBox)
 
     return output
 

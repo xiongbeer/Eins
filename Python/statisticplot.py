@@ -18,6 +18,7 @@ class DataParse(object):
     def parseLocateInfo(self):
         output = []
         timeMap = []
+        
         time = self.tempData['Time'][self.buffer]
         for i in self.tempData['Locate'].str.split(':')[self.buffer]:
             temp = np.array(i.split(','),dtype='float')
