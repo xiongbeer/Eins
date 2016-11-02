@@ -21,9 +21,10 @@
 ## 开发进度  
 ### 绘图功能   
 ![](./Source/T.png) &nbsp; 时空图  
- ***  
-* Ns Model Eg:
+ ***
+* A Ns Model Eg:
 ![](./Source/demo2.jpg)
+
  ***  
 
 ![](./Source/F.png) &nbsp;动态仿真
