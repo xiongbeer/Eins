@@ -4,15 +4,14 @@ import numpy as np
 import basicroad as br
 import basicplot as bp
 import statistics as st
-plantime = 1200
+plantime = 300
 carsNum = 100
-
 vmax = 5
 carTemp = br.Car()
 carTemp.vDistance = 0
 carTemp.length = 1
 InitCar = br.initCarsDistributed(
-    1000, carTemp, [0] * carsNum, carsNum, lanes = 1)
+    500, carTemp, [0] * carsNum, carsNum, lanes = 1)
 if __name__ == '__main__':
     
     print 'Process start'
@@ -20,8 +19,8 @@ if __name__ == '__main__':
     #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
     #rd.setConnectTo(rd2)
     #rd.addCarAutomaticByTime(True, carTemp, 2)
-    rd.addCarAutomaticByBound(True, carTemp)
-    rd.setTT(True)
+    #rd.addCarAutomaticByBound(True, carTemp)
+    #rd.setTT(True)
     rdinfo = br.ProcessWriter(rd,'road2',plantime)
     rdinfo.setInit()
     counter = 0

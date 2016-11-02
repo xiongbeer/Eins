@@ -14,7 +14,7 @@ KKW_1 = {'k':2.55, 'vp':14.0, 'pa1':0.2, 'pa2':0.052, 'p':0.04}
 KKW_2 = {'p':0.04, 'pa':0.052, 'beta':0.05}
 KKW_3 = {'p':0.04, 'beta':0.05}
 KKW_4 = {'d1':2.5, 'k':2.55, 'p':0.04, 'pa':0.052}
-
+FLOAT_PREC = 2
 
 #不作为类,用作为结构体,记录车的各种参数
 class Car:
@@ -652,7 +652,8 @@ class ProcessWriter(object):
         if self.setFlag != True:
             self.outputFlow = open(self.savePath,'w+')
             self.outputFlow.write('Time Locate V\n')
-            self.outputFlow.write(str(self.plantime)+' '+str(self.road.getRoadLanes())+' -'+'\n')
+            self.outputFlow.write(str(self.plantime) + ' ' + str(self.road.getRoadLanes()) + ' ' +
+                    str(self.road.getRoadLength()) + '\n')
             self.setFlag = True
 
     def writeInfo(self):
@@ -668,13 +669,14 @@ class ProcessWriter(object):
                     outputLocate += ':'
                     outputV += ':'
                 for i in xrange(len(lane)):
-                    outputLocate += (str(lane[i].locate))
-                    outputV += (str(lane[i].v))
+                    outputLocate += (str(round(lane[i].locate, FLOAT_PREC)))
+                    outputV += (str(round(lane[i].v, FLOAT_PREC)))
                     if i != len(lane)-1:
                         outputLocate += ','
                         outputV += ','
+            #这里的-1只是一个占位符号,并没有实际用处,作用是防止在只有一辆车的时候pandas读取报错
             if outputLocate != '':
-                self.outputFlow.write(str(self.road.getExecTime())+' '+outputLocate+' '+outputV+'\n')
+                self.outputFlow.write(str(self.road.getExecTime())+' '+'-1,'+outputLocate+' '+'-1,'+outputV+'\n')
         else:
             raise 'write failed'
     def cleanAll(self):
