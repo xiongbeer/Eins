@@ -5,7 +5,7 @@ import basicroad as br
 import basicplot as bp
 import statistics as st
 plantime = 300
-carsNum = 100
+carsNum = 200
 vmax = 5
 carTemp = br.Car()
 carTemp.vDistance = 0
@@ -14,12 +14,19 @@ InitCar = br.initCarsDistributed(
     500, carTemp, [0] * carsNum, carsNum, lanes = 1)
 if __name__ == '__main__':
     
+    
     print 'Process start'
-    rd = br.NSRoad(InitCar, vmax, 1000, enterFlag_=True, lanes_=1)
+    
+    
+    rd = br.MCDRoad(InitCar, vmax, 1000, enterFlag_=True, lanes_=1)
     #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
     #rd.setConnectTo(rd2)
     #rd.addCarAutomaticByTime(True, carTemp, 2)
-    #rd.addCarAutomaticByBound(True, carTemp)
+    rd.addCarAutomaticByBound(True, carTemp)
+    bp.addRoad(np.array([20.0, 70.0]), np.array([50.0, 50.0]), rd)
+    bp.plot()
+
+    """
     #rd.setTT(True)
     rdinfo = br.ProcessWriter(rd,'road2',plantime)
     rdinfo.setInit()
@@ -32,5 +39,6 @@ if __name__ == '__main__':
         rd.reflushStatus()
         rdinfo.writeInfo()
     rdinfo.cleanAll()
+    """
     print 'Done'
     

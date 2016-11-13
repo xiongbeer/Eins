@@ -112,7 +112,7 @@ class TXPlot(object):
 
 #测试用
 if __name__ == '__main__':
-    A = Layer(1, plotModel_ = 'detail')
+    A = Layer(1)
     B =  TXPlot(r'./ProcessInfo_road2.csv', 'demo2')
     B.resetLayer(A)
     B.plot()

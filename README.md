@@ -33,19 +33,17 @@
 ### 支持的模型
 #### 已完成
 ![](./Source/T.png) &nbsp; &nbsp; 标准化周期性边界条件&开口边界性条件  
-![](./Source/T.png) &nbsp; &nbsp; 最原始的NS模型   
+![](./Source/T.png) &nbsp; &nbsp; NS模型   
 ![](./Source/T.png) &nbsp; &nbsp; Takayasu-Takayasu(TT)慢启动规则   
 ![](./Source/T.png) &nbsp; &nbsp; BJH慢启动规则  
 ![](./Source/T.png) &nbsp; &nbsp; VDR慢启动规则
+![](./Source/T.png) &nbsp; &nbsp; 改进舒适驾驶(MCD)模型
+![](./Source/T.png) &nbsp; &nbsp; 舒适驾驶(CD)模型
+![](./Source/T.png) &nbsp; &nbsp; 速度效应(VE)
 #### 测试中
-![](./Source/p.png) &nbsp; &nbsp; 舒适驾驶(CD)模型  
-![](./Source/p.png) &nbsp; &nbsp; 改进舒适驾驶(MCD)模型
+![](./Source/p.png) &nbsp; &nbsp; KKW模型
 #### 待开发
-* 速度效应模型
-* 同步流
-* KKW模型
 * Lee的考虑减速限制的模型
-* 鸣笛效应
 * 双车道模型
 * 多车道模型
 * 双向交通模型

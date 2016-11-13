@@ -67,7 +67,6 @@ class RoadPlot(object):
             (self.rX[0] + self.xOffset, self.rY[0] - self.yOffset),
             (self.rX[0] - self.xOffset, self.rY[0] + self.yOffset)
         ]
-        print verts
         codes = [
             Path.MOVETO,
             Path.LINETO,
