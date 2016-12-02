@@ -47,9 +47,8 @@
 * CCA模型  
 
 ### 运行速度优化
-![](./Source/F.png) &nbsp; &nbsp; Pypy支持  
-![](./Source/F.png) &nbsp;  &nbsp; Cpython支持  
-![](./Source/F.png) &nbsp;  &nbsp; Hadoop支持  
+![](./Source/F.png) &nbsp;  &nbsp; Cuda  
+![](./Source/F.png) &nbsp;  &nbsp; Hadoop  
 
 <a name="安装"></a>
 ## 安装
