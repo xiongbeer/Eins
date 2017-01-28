@@ -49,7 +49,7 @@ class Road(object):
         self.beta = 0.2                         #减速概率的beta因子,同上
         self.autoAdderSwitch = False            #是否自动添加车辆
         self.autoAdderByTime = False            #是否按时间自动添加车辆,与前一个Flag冲突
-        self.autoAdder = None                   #自动添加车辆的初始速度
+        self.autoAdderBox = None                   #自动添加车辆的初始速度
         self.connectRoad = connectRoad_         #连接的公路(入口),默认值为空
         self.autoAddTime = 0                    #用户定义的自动添加车辆的时间间隔
         self.timeCounter = 0                    #系统内部用于自动添加车辆的时间计数器
@@ -159,25 +159,27 @@ class Road(object):
     def reflushStatus(self):
         pass
 
-    def reflushWaitLine(self, opLane):
-
-        if len(self.waitLine) != 0:
-            opCar = self.waitLine[0]
-            #车辆优先进入相同车道标号的车道
-            if opCar.lane == opLane:
-                if len(self.carBox[opLane]) != 0:
-                    if  self.carBox[opLane][0].locate - opCar.locate >= (opCar.length + self.carBox[opLane][0].length)/2 + opCar.vDistance:
-                        self.carBox[opLane].insert(0, opCar)
-                        del self.waitLine[0]
-                    else:
-                        pass
-                else:
-                    self.carBox[opLane].append(opCar)
-                    del self.waitLine[0]
+    def reflushWaitLine(self):
+        opLane = 0
+        while(len(waitLine) is not 0):
+            opCar = waitLine[0]
+            addCar = copy.deepcopy(opCar)
+            if addCar.lane is opLane:
+                self.carBox[opLane].insert(0, addCar)
+                waitLine.remove(opCar)
+            elif addCar.lane > self.lanes:
+                self.carBox.insert(0, addCar)
+                waitLine.remove(opCar)
             else:
                 pass
-        else:
-            pass
+
+            if opLane < self.lanes:
+                opLane += 1
+            else:
+                opLane = 0
+
+    def changeLane(self):
+        pass
 
     def addCar(self, car):
         car = copy.deepcopy(car)    #深复制一个对象(新建一辆车)
@@ -189,7 +191,7 @@ class Road(object):
         self.leaveCars = [0]*self.lanes
 
     #自动添加车辆(每离开一辆就添加一辆)
-    def addCarAutomaticByBound(self, switch, car):
+    def cycleBoundaryCondition(self, switch, carTemplateBox):
         if self.autoAdderByTime != True:
             self.autoAdderSwitch = switch
             self.autoAdder = car
@@ -197,11 +199,11 @@ class Road(object):
             print 'Set add car automatic failed,there alreadly existed another mode'
 
     #按时间间隔添加车辆,与前一个冲突
-    def addCarAutomaticByTime(self, switch, car, timeStep):
+    def timeBoundaryCondition(self, switch, carTemplateBox, pers = None, timeStep = 1, nums = 1):
         if self.autoAdderSwitch != True:
             self.autoAdderByTime = switch
             self.autoAdder = car
-            if timeStep <= 0:
+            if timeStep > 0:
                 self.autoAddTime = timeStep
             else:
                 print 'timeStep must bigger than ZERO'
@@ -320,7 +322,7 @@ class NSRoad(Road):
                     opCar = self.carBox[lane][i]
                     opCar.lane = lane
                     nextCar = self.carBox[lane][i+1]
-                    self.NS(opCar, nextCar)
+                    v = self.NS(opCar, nextCar)
                     tempVSaver.append(v)
                     tempLocateSaver.append(opCar.locate + v)
             #最前的车单独计算
@@ -332,7 +334,7 @@ class NSRoad(Road):
                 info = self.connectRoad.getCarsInfo()
                 if len(info[opLane]) > 0:
                     nextCar = info[opLane][0]
-            self.NS(opCar, nextCar)
+            v = self.NS(opCar, nextCar)
             tempVSaver.append(v)
             tempLocateSaver.append(opCar.locate + v)
             
@@ -565,11 +567,11 @@ class MCDRoad(Road):
         self.timer()
         #每个车道分别计算,也就是车不会中途改变车道
         for lane in xrange(0,self.lanes):
+            tempVSaver = []
+            tempLocateSaver = []
             if len(self.carBox[lane]) == 0:
                 continue
             if len(self.carBox[lane]) >= 2:
-                tempVSaver = []
-                tempLocateSaver = []
                 for i in xrange(0, len(self.carBox[lane]) - 1):
                     opCar = self.carBox[lane][i]
                     nextCar = self.carBox[lane][i+1]
@@ -577,7 +579,7 @@ class MCDRoad(Road):
                         next2Car = self.carBox[lane][i+2]
                     except:
                         next2Car = None
-                    self.MCD(opCar, nextCar, next2Car)
+                    v = self.MCD(opCar, nextCar, next2Car)
                     tempVSaver.append(v)
                     tempLocateSaver.append(opCar.locate + v)
             #最前的车单独计算
@@ -589,23 +591,22 @@ class MCDRoad(Road):
                 info = self.connectRoad.getCarsInfo()
                 if len(info[opLane]) > 0:
                     nextCar = info[opLane][0]
-            self.MCD(opCar, nextCar, next2Car)
+            v = self.MCD(opCar, nextCar, next2Car)
             tempVSaver.append(v)
             tempLocateSaver.append(opCar.locate + v)
             
-            counter = 0         #记录有多少辆车需要离开道路
+            endCars = []
             for i in xrange(len(tempVSaver)):
                 opCar = self.carBox[lane][i]
                 opCar.v = tempVSaver[i]
                 opCar.locate = tempLocateSaver[i]
                 if opCar.locate >= self.length:
-                    counter += 1
+                    endCars.append(opCar)
             #到达尽头后移除车辆,增加endCarsV的值，代表有车需要进入其他道路
-            for i in xrange(counter):
-                opCar = self.carBox[lane][-1]
+            for opCar in endCars:    
                 opCar.locate -= self.length
                 self.endCars = np.append(self.endCars, opCar)
-                del self.carBox[lane][-1]
+                self.carBox[lane].remove(opCar)
                 self.leaveCars[lane] += 1
                 #如果出口连接了其他的道路,则自动将离开的车加入其入口
                 if self.connectRoad != None:
@@ -613,7 +614,7 @@ class MCDRoad(Road):
                 #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                 if self.autoAdderSwitch == True:
                     self.addCar(self.autoAdder)
-            self.reflushWaitLine(lane)
+        self.reflushWaitLine(lane)
         #如果有需要,按时间添加车辆的LOOP
         if self.autoAdderByTime == True:
             if self.autoAddTime == self.timer(get = True):
@@ -739,6 +740,7 @@ class KKWRoad(Road):
             if self.autoAddTime == self.timer(get = True):
                 self.timer(reset = True)
                 self.addCar(self.autoAdder)    
+
 class ProcessWriter(object):
     def __init__(self, road_, label_, plantime_):
         self.road = road_
@@ -755,21 +757,23 @@ class ProcessWriter(object):
             print 'alreadly init'
 
     def setInit(self):
-        if self.setFlag != True:
+        if self.setFlag is not True:
             self.outputFlow = open(self.savePath,'w+')
             self.outputFlow.write('Time Locate V\n')
             self.outputFlow.write(str(self.plantime) + ' ' + str(self.road.getRoadLanes()) + ' ' +
                     str(self.road.getRoadLength()) + '\n')
             self.setFlag = True
+        else:
+            pass
 
     def writeInfo(self):
-        if self.setFlag == True:
+        if self.setFlag is True:
             flag = False
             carBox = self.road.getCarsInfo()
             outputLocate = ''
             outputV = ''
             for lane in carBox:
-                if flag == False:
+                if flag is False:
                     flag = True
                 else:
                     outputLocate += ':'
@@ -789,16 +793,63 @@ class ProcessWriter(object):
         self.outputFlow.close()
 
 def initEmptyRoad(lanes):
+    if lanes <= 0 :
+        raise 'InitFailed: lanes must greater than ZERO!'
     output = []
     for i in xrange(lanes):
-        output.append(np.array([],dtype='object'))
+        output.append([])
     return output
 
 #在指定长度上初始化指定数量的车辆,可以指定分布,默认线性均匀分布
-def initCarsDistributed(length, carTemplate, initV, carsNum, lanes = 1, dis = 'linear'):
-    if length <= 0 or carsNum <= 0:
-        raise 'InitFailed'
+def initCarsDistributed(length, carTemplateBox, carsNum = None, lanes = 1, dis = 'linear', pers = None):
+    output = []
+    
+    if length <= 0:
+        raise 'InitFailed: Road length must greater than ZERO!'
+    if carsNum <= 0:
+        raise 'InitFailed: Cars num must greater than ZERO! '
 
+    if type(carTemplateBox) != list or type(carTemplateBox[0] != Car):
+        raise 'InitFailed: Unkonw car template type'
+
+    # 最密填充
+    if dis == 'maxium':
+        if len(carTemplateBox) == 1 and pers == None:
+            for lane in xrange(lanes):
+                adder = 0.0
+                temp = []
+                while adder <= length:
+                    newCar = copy.deepcopy(carTemplateBox[0])
+                    newCar.locate = adder
+                    adder += (newCar.length + newCar.vDistance)
+                    temp.append(newCar)
+                output.append(temp)
+            return output
+        elif len(carTemplateBox) == pers:
+            if sum(per) != 1.0:
+                raise 'InitFailed:'
+            for lane in xrange(lanes):
+                adder = 0.0
+                temp = []
+                while adder <= length:
+                    dice = np.random.random()
+                    upper = 0.0
+                    lower = 0.0
+                    for i in xrange(len(pers)):
+                        upper += pers[i]
+                        if lower <= dice < upper:
+                            newCar = copy.deepcopy(carTemplateBox[i])
+                            break
+                        lower += pers[i]
+                    newCar.locate = adder
+                    adder += (newCar.length + newCar.vDistance)
+                    temp.append(newCar)
+                output.append(temp)
+        else:
+            raise 'InitFailed: '
+
+
+    # 均匀线性分布
     if dis == 'linear':
         locate = np.linspace(0.0, length, num = carsNum)
         if carsNum != 1:
