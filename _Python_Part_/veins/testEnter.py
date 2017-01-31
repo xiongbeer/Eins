@@ -3,6 +3,7 @@
 import numpy as np
 import basicroad as br
 import basicplot as bp
+import road
 import statistics as st
 import pandas as pd
 plantime = 50
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     
     
     print 'Process start'
-    rd = br.MCDRoad(InitCar, vmax, 2000, enterFlag=True, lanes=1)
+    rd = road.execRoad(InitCar, vmax, 2000, enterFlag=True, lanes=1)
     #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
     #rd.setConnectTo(rd2)
     rd.cycleBoundaryCondition(True, carTemp)
