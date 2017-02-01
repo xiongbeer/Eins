@@ -24,36 +24,37 @@ class Car:
         self.bn = False                     #刹车灯
         self.tst = 0                        #敏感时间
         self.stoped = False                 #上一个时刻受到了阻挡后刹车的标记
-
+        self.changeFlag = False
+        
 class Road(object):
     'Road && Cars'
 
     def __init__(self, carBox, vmax, length, lanes = 1,
                  enterCars = 0, enterFlag = False, connectRoad = None):
-        self.carBox = carBox                   #道路上所有车辆及其具体状态和参数
-        self.enterCars = enterCars             #已进入此路的车辆数
-        self.leaveCars = [0]*lanes             #离开此路的车辆数
-        self.vmax = vmax                       #道路最大车速
-        self.length = length                   #道路长度
-        self.lanes = lanes                     #车道数,默认为单车道
+        self.carBox = carBox                    #道路上所有车辆及其具体状态和参数
+        self.enterCars = enterCars              #已进入此路的车辆数
+        self.leaveCars = [0]*lanes              #离开此路的车辆数
+        self.vmax = vmax                        #道路最大车速
+        self.length = length                    #道路长度
+        self.lanes = lanes                      #车道数,默认为单车道
         self.laneFlag = 0                       #标记当前操作的车道号
         self.endCars = np.array([])             #list的长度表示有多少车辆需要进入其他道路,键值为其速度
-        self.enterFlag = enterFlag             #标记此道是否是入口,如果非入口,
+        self.enterFlag = enterFlag              #标记此道是否是入口,如果非入口,
                                                 #locate初始化值必须为[np.array([-1.0])],vBox必须为[np.array([0])](单车道,
                                                 #多车道只需向list多添加初始值就可以了)
+        self.changeSwitch = False
         self.alpha = 0.6                        #减速概率的alpha因子,不能随意修改,除非你知道自己在干什么
         self.beta = 0.2                         #减速概率的beta因子,同上
         self.autoAdderSwitch = False            #是否自动添加车辆
         self.autoAdderByTime = False            #是否按时间自动添加车辆,与前一个Flag冲突
         self.autoAdderBox = None                #自动添加车辆的初始速度
-        self.connectRoad = connectRoad         #连接的公路(入口),默认值为空
+        self.connectRoad = connectRoad          #连接的公路(入口),默认值为空
         self.autoAddTime = 0                    #用户定义的自动添加车辆的时间间隔
         self.timeCounter = 0                    #系统内部用于自动添加车辆的时间计数器
         self.wholeTime = 0                      #总的运行时间
         self.stableP = 0.4                      #固定减速因子,一旦设定,那么alpha和beta就会失效
         self.waitLine = []                      #等待添加的车辆列队
         self.pers = None
-
 
     def __str__(self):
         des = '\n车道数:'+str(self.lanes)+'\n道路长度:'+str(self.length)+'\n运行时间(/s):'+str(self.wholeTime)+'\n是否为入口:'+str(self.enterFlag)
@@ -505,9 +506,43 @@ class execRoad(Road):
             else:
                 opLane = 0
 
-    def changeLane(self):
+    def changeLane(self, opCar, nextCar):
+        dis = self.vmax + opCar.vDistance + opCar.length
+        
+
+        #判断是否需要换道
+        if self.changeSwitch is False or opCar.lane - 1 < 0 or opCar.lane + 1 >= self.lanes or nextCar is None or nextCar.locate - opCar.locate > dis:
+            return False
+        insertIndex = 0
+        carsLocate = self.getCarsLocate()
+        
         # 左道优先
-        pass
+        opLane = opCar.lane - 1
+        carsDistance = opCar.locate - carsLocate[opLane]
+        carsInBound = carsDistance[abs(carsDistance) <= dis]    
+        if carsInBound.size is 0:
+            insertIndex = carsDistance.size
+            for offset, index in enumerate(carsDistance):
+                if offset > 0:
+                    insertIndex = index + 1
+                    break
+            self.carBox[opLane].insert(opCar, insertIndex)
+            self.carBox[car.lane].remove(opCar)
+            return True
+        
+        # 右道
+        opLane = opCar.lane + 1
+        carsDistance = opCar.locate - carsLocate[opLane]
+        carsInBound = carsDistance[abs(carsDistance) <= dis]
+        if carsInBound.size is 0:
+            insertIndex = carsDistance.size
+            for offset, index in enumerate(carsDistance):
+                if offset > 0:
+                    insertIndex = index + 1
+                    break
+            self.carBox[opLane].insert(opCar, insertIndex)
+            self.carBox[car.lane].remove(opCar)
+            return True
 
 
     def addCar(self, car):
