@@ -38,7 +38,7 @@ class RoadPlot(object):
         self.scat = self.plotLayer.scatter([0], [0], s = 1)
 
         #计算坐标偏移量
-        self.mirrorLength = np.sqrt( np.power(self.rX[0] - self.rX[1],2) + np.power(self.rY[0] - self.rY[1], 2) )
+        self.mirrorLength = np.sqrt(np.power(self.rX[0] - self.rX[1],2) + np.power(self.rY[0] - self.rY[1], 2) )
         self.costheta = (self.rX[1] - self.rX[0])/self.mirrorLength
         self.sintheta = np.sqrt(1 - np.power(self.costheta, 2))
         self.yOffset = self.width*self.costheta/2
@@ -92,10 +92,10 @@ class RoadPlot(object):
         vmax = self.road.getRoadVMax()
         vBox = self.road.getCarsV()
         for laneV in vBox:
-            for v in laneV:
-                if v <= 0.2*vmax:
+            for speed in laneV:
+                if speed <= 0.2*vmax:
                     collector.append([1., 0., 0., 1.])
-                elif v <= 0.6*vmax:
+                elif speed <= 0.6*vmax:
                     collector.append([1., 1., 0., 1.])
                 else:
                     collector.append([0., 1., 0., 1.])
@@ -113,7 +113,7 @@ class RoadPlot(object):
         #---temp test
         index = 0
         #---
-        for locate in self.road.getCarsLocate():
+        for locate in self.road.get_cars_locate():
             mapping = locate/self.road.getRoadLength()                 #映射比率值
             plotX = mapping*((self.rX[1] - self.rX[0])) + self.rX[0]
             #---
