@@ -12,12 +12,12 @@ class Car(object):
     def __init__(self):
         self.name = 'default'               #车类名称,用于统计
         self.length = 1.0                   #车身长度
-        self.safedistance = 0.0                #最小车距
+        self.safedistance = 0.0             #最小车距
         self.slowacc = 0.5                  #慢加速度/s
         self.acc = 1.0                      #加速度/s
         self.negacc = 1.0                   #减速度/s
         self.view = 0                       #司机视野距离
-        self.speed = 0.0                        #当前速度
+        self.speed = 0.0                    #当前速度
         self.locate = 0.0                   #当前所在位置
         self.lane = 0                       #当前所在车道
         self.height = 0.0                   #汽车高度,暂时没用
@@ -43,7 +43,7 @@ class Road(object):
                                                 #locate初始化值必须为[np.array([-1.0])],
                                                 # vBox必须为[np.array([0])](单车道,
                                                 #多车道只需向list多添加初始值就可以了)
-        self.changeswitch = True
+        self.changeswitch = False
         self.alpha = 0.6                        #减速概率的alpha因子,不能随意修改,除非你知道自己在干什么
         self.beta = 0.2                         #减速概率的beta因子,同上
         self.autoAdderSwitch = False            #是否自动添加车辆
@@ -75,7 +75,7 @@ class Road(object):
             output.append(np.array([car.locate for car in lane]))
         return output
 
-    def getCarsV(self):
+    def get_cars_v(self):
         output = []
         for lane in self.carbox:
             output.append(np.array([car.speed for car in lane]))
@@ -443,15 +443,15 @@ class execRoad(Road):
                         opCar = next(it)
                         try:
                             nextCar = next(it)
-                        except:
+                        except StopIteration:
                             nextCar = None
                         if self.changeLane(opCar, nextCar) is True:
                             changebox.append(opCar)
-                    except:
+                    except StopIteration:
                         break
-            for car in changebox:
-                car.changeflag = False
-            
+
+            #for car in changebox:
+            #    car.changeflag = False
 
         # 并行更新
         for lane in xrange(0, self.lanes):
@@ -539,39 +539,44 @@ class execRoad(Road):
         if Pignore is not None:
             if np.random.random() > Pignore:
                 return False
-        insertIndex = 0
         carsLocate = self.get_cars_locate()
-
+        insertIndex = 0
         # 左道优先
         opLane = opCar.lane - 1
         carsDistance = opCar.locate - carsLocate[opLane]
         carsInBound = carsDistance[abs(carsDistance) <= dis]
+        negflag = False
         if carsInBound.size is 0:
-            insertIndex = carsDistance.size
-            for offset, index in enumerate(carsDistance):
+            for index, offset in enumerate(carsDistance):
                 if offset > 0:
                     insertIndex = index + 1
+                else:
+                    insertIndex = index
                     break
-            opCar.changeflag = True
-            self.carbox[opLane].insert(opCar, insertIndex)
-            self.carbox[car.lane].remove(opCar)
-            return True
 
+            opCar.changeflag = True
+            self.carbox[opLane].insert(insertIndex, opCar)
+            self.carbox[opCar.lane].remove(opCar)
+            opCar.lane = opLane
+            return True
+        
         # 右道
         opLane = opCar.lane + 1
         carsDistance = opCar.locate - carsLocate[opLane]
         carsInBound = carsDistance[abs(carsDistance) <= dis]
         if carsInBound.size is 0:
             insertIndex = carsDistance.size
-            for offset, index in enumerate(carsDistance):
+            for index, offset in enumerate(carsDistance):
                 if offset > 0:
                     insertIndex = index + 1
+                else:
+                    insertIndex = index
                     break
             opCar.changeflag = True
-            self.carbox[opLane].insert(opCar, insertIndex)
-            self.carbox[car.lane].remove(opCar)
+            self.carbox[opLane].insert(insertIndex, opCar)
+            self.carbox[opCar.lane].remove(opCar)
             return True
-
+        
         return False
 
     def addCar(self, car):

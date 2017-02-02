@@ -90,7 +90,7 @@ class RoadPlot(object):
     def getColorMap(self):
         collector = []
         vmax = self.road.getRoadVMax()
-        vBox = self.road.getCarsV()
+        vBox = self.road.get_cars_v()
         for laneV in vBox:
             for speed in laneV:
                 if speed <= 0.2*vmax:

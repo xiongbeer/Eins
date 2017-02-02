@@ -7,19 +7,20 @@ import road
 import statistics as st
 import pandas as pd
 plantime = 50
-carsNum = 10
+carsNum = 30
 vmax = 20
 carTemp = road.Car()
 carTemp.safedistance = 5
 carTemp.length = 5
+carTemp.lane = 1
 InitCar = road.initCarsDistributed(
-    100, [carTemp] )
+    100, [carTemp], lanes = 3)
 if __name__ == '__main__':
     
     
     print 'Process start'
     
-    rd = road.execRoad(InitCar, vmax, 2000, enterflag=True, lanes=1)
+    rd = road.execRoad(InitCar, vmax, 2000, enterflag=True, lanes=3)
     #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
     #rd.setConnectTo(rd2)
     rd.cycleBoundaryCondition(True, carTemp)
