@@ -89,16 +89,20 @@ class RoadPlot(object):
 
     def getColorMap(self):
         collector = []
+        carbox = self.road.getCarsInfo()
         vmax = self.road.getRoadVMax()
-        vBox = self.road.get_cars_v()
-        for laneV in vBox:
-            for speed in laneV:
-                if speed <= 0.2*vmax:
-                    collector.append([1., 0., 0., 1.])
-                elif speed <= 0.6*vmax:
-                    collector.append([1., 1., 0., 1.])
+        for lane in carbox:
+            for car in lane:
+                if car.name != 'default':
+                    offset = 0.5
                 else:
-                    collector.append([0., 1., 0., 1.])
+                    offset = 0.0
+                if car.speed <= 0.2*vmax:
+                    collector.append([1. - offset, 0., 0., 1. - offset])
+                elif car.speed <= 0.6*vmax:
+                    collector.append([1. - offset, 1., 0., 1. - offset])
+                else:
+                    collector.append([0., 1. - offset, 0., 1. - offset])
         return np.array(collector)
 
     def setRoadWidth(self, num):

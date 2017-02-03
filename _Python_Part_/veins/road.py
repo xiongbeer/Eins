@@ -7,6 +7,10 @@
 import numpy as np
 import copy
 
+
+KKWModel = {
+
+}
 #不作为类,用作为结构体,记录车的各种参数
 class Car(object):
     def __init__(self):
@@ -162,7 +166,7 @@ class execRoad(Road):
                 entercars, enterflag, connectRoad)
 
         self.setMCDPara()
-        self.execRule = self.KKW
+        self.execRule = self.NS
 
 
         self.TTFlag = False
@@ -361,7 +365,7 @@ class execRoad(Road):
         #step7:位置更新
         return nextv
 
-    def KKW(self, car, nextCar, para):
+    def KKW(self, car, nextCar, para, model = KKWModel):
         #参数确定
         #paras needs:vfree,d,p0
         dn = (car.length + nextCar.length)/2 + car.safedistance
@@ -369,44 +373,44 @@ class execRoad(Road):
 
         #request paras:k,p0,p,pa1,pa2,vp
         if self.modelKind == 1:
-            D = self.modelPara['d'] + self.modelPara['k']*car.speed*tao
+            D = model['d'] + model['k']*car.speed*tao
             if car.speed > 0:
-                pb = self.modelPara['p']
+                pb = model['p']
             else:
-                pb = self.modelPara['p0']
+                pb = model['p0']
 
             if car.speed < vp:
-                pa = self.modelPara['pa1']
+                pa = model['pa1']
             else:
-                pa = self.modelPara['pa2']
+                pa = model['pa2']
 
         #request paras:beta,p0
         elif self.modelKind == 2:
-            D = self.modelPara['d'] + car.speed*tao + self.modelPara['beta']\
+            D = model['d'] + car.speed*tao + model['beta']\
                 *np.power(car.speed, 2)/(car.acc*2)
             if car.speed > 0:
-                pb = self.modelPara['p']
+                pb = model['p']
             else:
-                pb = self.modelPara['p0']
+                pb = model['p0']
 
         #request paras:pa=0,beta,p0,p
         elif self.modelKind == 3:
-            D = self.modelPara['d'] + car.speed*tao + self.modelPara['beta']\
+            D = model['d'] + car.speed*tao + model['beta']\
                     *np.power(car.speed, 2)/(car.acc<<1)
-            if 0 < car.speed < self.modelPara['vfree']:
-                pb = self.modelPara['p']
+            if 0 < car.speed < model['vfree']:
+                pb = model['p']
             elif car.speed == 0:
-                pb = self.modelPara['p0']
-            elif car.speed == self.modelPara['vfree']:
+                pb = model['p0']
+            elif car.speed == model['vfree']:
                 pb = 0
 
         #request paras:d1<d,k,p0,p,pa
         elif self.modelKind == 4:
-            D = self.modelPara['d1'] + self.modelPara['k']*car.speed*tao
+            D = model['d1'] + model['k']*car.speed*tao
             if car.speed > 0:
-                pb = self.modelPara['p']
+                pb = model['p']
             else:
-                pb = self.modelPara['p0']
+                pb = model['p0']
         else:
             print 'Unkonw modelKind'
 
@@ -430,7 +434,7 @@ class execRoad(Road):
             era = 0
         car.speed = max(0, min(vc + car.acc*tao*era, vc + car.acc*tao, vfree, vsafe))
 
-        car.locate += car.speed
+        return car.speed
 
     def reflushStatus(self):
         self.timer()
@@ -505,9 +509,16 @@ class execRoad(Road):
                 if self.autoAdderSwitch == True:
                     if self.pers is None:
                         self.addCar(self.autoAdder[0], opCar.lane)
-
-                    
-                
+                    else:
+                         dice = np.random.random()
+                         upper = 0.0
+                         lower = 0.0
+                         for i in xrange(len(self.pers)):
+                            upper += self.pers[i]
+                            if lower <= dice < upper:
+                                self.addCar(self.autoAdder[i], opCar.lane)
+                                break
+                            lower += self.pers[i]                                
                 self.carbox[lane].remove(opCar)
 
         self.reflushWaitLine()
@@ -515,7 +526,22 @@ class execRoad(Road):
         if self.autoAdderByTime == True:
             if self.autoAddTime == self.timer(get=True):
                 self.timer(reset=True)
-                self.addCar(self.autoAdder)
+                for i in xrange(self.nums):
+                    #TODO:添加其他lane-method
+                    opLane = int(np.random.random()*self.lanes)
+                    if self.pers is None:
+                        self.addCar(self.autoAdder[0], opLane)
+                    else:
+                        dice = np.random.random()
+                        upper = 0.0
+                        lower = 0.0
+                        for i in xrange(len(self.pers)):
+                            upper += self.pers[i]
+                            if lower <= dice < upper:
+                                self.addCar(self.autoAdder[i], opLane)
+                                break
+                            lower += self.pers[i] 
+        
 
     def reflushWaitLine(self):
         opLane = 0
@@ -606,10 +632,13 @@ class execRoad(Road):
             print 'Set add car automatic failed,there alreadly existed another mode'
 
     #按时间间隔添加车辆,与前一个冲突
-    def timeBoundaryCondition(self, switch, carTemplateBox, pers=None, timeStep=1, nums=1):
+    def timeBoundaryCondition(self, switch, carTemplateBox, pers=None, timeStep=1, nums=1, method = 'random'):
         if self.autoAdderSwitch != True:
+            self.pers = pers
             self.autoAdderByTime = switch
-            self.autoAdder = car
+            self.autoAdder = carTemplateBox
+            self.nums = nums
+            self.method = method
             if timeStep > 0:
                 self.autoAddTime = timeStep
             else:
@@ -717,12 +746,13 @@ def initCarsDistributed(length, carTemplateBox, carsNum=None, lanes=1, dis='maxi
                 while adder <= length:
                     newCar = copy.deepcopy(carTemplateBox[0])
                     newCar.locate = adder
+                    newCar.lane = lane
                     adder += (newCar.length + newCar.safedistance)
                     temp.append(newCar)
                 output.append(temp)
             return output
-        elif len(carTemplateBox) == pers:
-            if sum(per) != 1.0:
+        elif len(carTemplateBox) == len(pers):
+            if sum(pers) != 1.0:
                 raise 'InitFailed:'
             for lane in xrange(lanes):
                 adder = 0.0
@@ -738,8 +768,10 @@ def initCarsDistributed(length, carTemplateBox, carsNum=None, lanes=1, dis='maxi
                             break
                         lower += pers[i]
                     newCar.locate = adder
+                    newCar.lane = lane
                     adder += (newCar.length + newCar.safedistance)
                     temp.append(newCar)
                 output.append(temp)
+            return output
         else:
             raise 'InitFailed: '
