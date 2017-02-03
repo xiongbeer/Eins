@@ -13,6 +13,7 @@ carTemp = road.Car()
 carTemp.safedistance = 5
 carTemp.length = 5
 carTemp.lane = 1
+carTemp.speed = vmax
 InitCar = road.initCarsDistributed(
     100, [carTemp], lanes = 3)
 if __name__ == '__main__':
@@ -23,7 +24,7 @@ if __name__ == '__main__':
     rd = road.execRoad(InitCar, vmax, 2000, enterflag=True, lanes=3)
     #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
     #rd.setConnectTo(rd2)
-    rd.cycleBoundaryCondition(True, carTemp)
+    rd.cycleBoundaryCondition(True, [carTemp])
     #rd.addCarAutomaticByBound(True, carTemp)
     bp.addRoad(np.array([20.0, 70.0]), np.array([50.0, 50.0]), rd)
     bp.plot()

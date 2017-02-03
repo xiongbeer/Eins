@@ -11,6 +11,8 @@
 主要用于研究高速公路与交通和城市网络交通.
 * 该项目旨在提供一个简易上手且功能丰富的元胞自动机交通模拟库
 
+### 文档与教程
+[Veins-Docs](https://veinsdocs.readthedocs.io/en/latest/index.html)
 
 ## 开发进度  
 ### 绘图功能   
@@ -34,21 +36,12 @@
 ![](./Source/T.png) &nbsp; &nbsp; 改进舒适驾驶(MCD)模型  
 ![](./Source/T.png) &nbsp; &nbsp; 舒适驾驶(CD)模型  
 ![](./Source/T.png) &nbsp; &nbsp; 速度效应(VE)  
+![](./Source/T.png) &nbsp; &nbsp; KKW模型  
 #### 测试中
-![](./Source/p.png) &nbsp; &nbsp; KKW模型
-#### 待开发
-* Lee的考虑减速限制的模型
-* 双车道模型
-* 多车道模型
-* 双向交通模型
-* BCA模型
-* EBCA模型
-* EBCA2模型
-* GBCA模型
-* CCA模型  
+![](./Source/p.png) 多车道模型
+ 
 
 ### 运行速度优化
-![](./Source/F.png) &nbsp;  &nbsp; Cuda  
 ![](./Source/F.png) &nbsp;  &nbsp; Hadoop  
 
 <a name="安装"></a>
@@ -63,5 +56,4 @@
 目前只能clone  
 后续会推送到PyPi上  
 
-### 文档与教程
-[Veins-Docs](https://veinsdocs.readthedocs.io/en/latest/index.html)
+

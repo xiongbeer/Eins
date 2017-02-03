@@ -162,7 +162,7 @@ class execRoad(Road):
                 entercars, enterflag, connectRoad)
 
         self.setMCDPara()
-        self.execRule = self.MCD
+        self.execRule = self.KKW
 
 
         self.TTFlag = False
@@ -205,7 +205,7 @@ class execRoad(Road):
         self.VEFlag = switch
 
     #最基础的NS模型
-    def NS(self, car, nextCar):
+    def NS(self, car, nextCar, para):
         #step1:加速
         if self.TTFlag:
             tempP = self.TT(car, nextCar, self.TTPt)
@@ -242,6 +242,7 @@ class execRoad(Road):
                 car.speed = max(car.speed - car.negacc, 0)
         elif np.random.random() < self.stableP:
             car.speed = max(car.speed - car.negacc, 0)
+            
 
         #step4:运动
         return car.speed
@@ -360,7 +361,7 @@ class execRoad(Road):
         #step7:位置更新
         return nextv
 
-    def KKW(self, car, nextCar):
+    def KKW(self, car, nextCar, para):
         #参数确定
         #paras needs:vfree,d,p0
         dn = (car.length + nextCar.length)/2 + car.safedistance
@@ -450,8 +451,8 @@ class execRoad(Road):
                     except StopIteration:
                         break
 
-            #for car in changebox:
-            #    car.changeflag = False
+            for car in changebox:
+                car.changeflag = False
 
         # 并行更新
         for lane in xrange(0, self.lanes):
@@ -499,10 +500,16 @@ class execRoad(Road):
                 #如果出口连接了其他的道路,则自动将离开的车加入其入口
                 if self.connectRoad != None:
                     self.connectRoad.addCar(opCar)
-                self.carbox[lane].remove(opCar)
+                
                 #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                 if self.autoAdderSwitch == True:
-                    self.addCar(self.autoAdder)
+                    if self.pers is None:
+                        self.addCar(self.autoAdder[0], opCar.lane)
+
+                    
+                
+                self.carbox[lane].remove(opCar)
+
         self.reflushWaitLine()
         #如果有需要,按时间添加车辆的LOOP
         if self.autoAdderByTime == True:
@@ -579,8 +586,9 @@ class execRoad(Road):
         
         return False
 
-    def addCar(self, car):
+    def addCar(self, car, lane):
         car = copy.deepcopy(car)    #深复制一个对象(新建一辆车)
+        car.lane = lane
         self.entercars += 1
         self.waitLine.append(car)
 
