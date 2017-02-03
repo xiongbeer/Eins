@@ -60,16 +60,47 @@ class Road(object):
         self.stableP = 0.4                      #固定减速因子,一旦设定,那么alpha和beta就会失效
         self.waitLine = []                      #等待添加的车辆列队
         self.pers = None
-
+        self.iterindex = -1
     def __str__(self):
-        des = '\n车道数:'+str(self.lanes)+'\n道路长度:'+str(self.length)+ \
-              '\n运行时间(/s):'+str(self.wholeTime)+'\n是否为入口:'+str(self.enterflag)
+        des =   '+===================+\n' + \
+                ' - 运行规则及道路HashValue：' + str(self.execRule)  + \
+                '\n - 车道数:'+str(self.lanes) + \
+                ' - 道路长度(m):'+str(self.length) + \
+                ' - 运行时间(s):'+str(self.wholeTime) + \
+                ' - 是否为入口:'+str(self.enterflag)
         carsCounter = []
+        des += '\n --------------------'
+        meanspeed, whole = self.get_mean_speed()
+        if whole is not None:
+            whole = round(whole, 3)
         for index, lane in enumerate(self.carbox):
+            if meanspeed[index] != -1:
+                v = round(meanspeed[index], 3)
+            else:
+                v = None
             carsCounter.append(len(lane))
-            des += '\n'+'车量-车道'+str(index)+':'+str(len(lane))
-        des += '\n'+'车总量:'+str(sum(carsCounter))
+            des +=  '\n'+' - 车道_'+str(index) + \
+                    ' - 车辆数目' +':'+str(len(lane)) + \
+                    ' - 平均车速：' + str(v) + \
+                    ' - 已通过车辆数：' + str(self.leavecars[index])
+        des +=  '\n'+' -  整体  - 车辆数目:'+str(sum(carsCounter)) + \
+                ' - 平均车速：' + str(whole) + \
+                ' - 已通过车辆数：' + str(sum(self.leavecars)) + \
+                '\n --------------------' + \
+                '\n - 连接道路：' + str(self.connectRoad) + \
+                ' - 时间边界条件：' + str(self.autoAdderByTime) + \
+                ' - 循环边界条件：' + str(self.autoAdderSwitch) + \
+                '\n+===================+'
         return des
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        self.iterindex += 1
+        if self.iterindex >= self.lanes:
+            raise StopIteration
+        return self.carbox[self.iterindex]
 
     #标记线内的为public func
     #-----------------------------------------------------
@@ -84,6 +115,25 @@ class Road(object):
         for lane in self.carbox:
             output.append(np.array([car.speed for car in lane]))
         return output
+
+    def get_mean_speed(self):
+        carsvbox = self.get_cars_v()
+        output = np.array([])
+        counter = 0
+        adder = 0.0
+        for lane in carsvbox:
+            if lane.size != 0:
+                value = lane.mean()
+                counter += 1
+                output = np.append(output, value)
+                adder += value
+            else:
+                output = np.append(output, -1)
+        if counter != 0:
+            whole = adder/counter
+        else:
+            whole = None
+        return output, whole
 
     def ViewCars(self, car, viewBox, offset=0.0):
         tempLocate = np.array([])
@@ -119,7 +169,7 @@ class Road(object):
         return self.wholeTime
 
     #=====================模型=========================
-    
+
     #慢启动规则
     def TT(self, car, nextCar, pt):
         if car.speed == 0:
@@ -246,7 +296,7 @@ class execRoad(Road):
                 car.speed = max(car.speed - car.negacc, 0)
         elif np.random.random() < self.stableP:
             car.speed = max(car.speed - car.negacc, 0)
-            
+
 
         #step4:运动
         return car.speed
@@ -504,7 +554,7 @@ class execRoad(Road):
                 #如果出口连接了其他的道路,则自动将离开的车加入其入口
                 if self.connectRoad != None:
                     self.connectRoad.addCar(opCar)
-                
+
                 #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                 if self.autoAdderSwitch == True:
                     if self.pers is None:
@@ -518,7 +568,7 @@ class execRoad(Road):
                             if lower <= dice < upper:
                                 self.addCar(self.autoAdder[i], opCar.lane)
                                 break
-                            lower += self.pers[i]                                
+                            lower += self.pers[i]
                 self.carbox[lane].remove(opCar)
 
         self.reflushWaitLine()
@@ -540,8 +590,8 @@ class execRoad(Road):
                             if lower <= dice < upper:
                                 self.addCar(self.autoAdder[i], opLane)
                                 break
-                            lower += self.pers[i] 
-        
+                            lower += self.pers[i]
+
 
     def reflushWaitLine(self):
         opLane = 0
@@ -592,7 +642,7 @@ class execRoad(Road):
             self.carbox[opCar.lane].remove(opCar)
             opCar.lane = opLane
             return True
-        
+
         # 右道
         opLane = opCar.lane + 1
         carsDistance = opCar.locate - carsLocate[opLane]
@@ -609,7 +659,7 @@ class execRoad(Road):
             self.carbox[opLane].insert(insertIndex, opCar)
             self.carbox[opCar.lane].remove(opCar)
             return True
-        
+
         return False
 
     def addCar(self, car, lane):
