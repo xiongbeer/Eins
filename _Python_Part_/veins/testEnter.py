@@ -28,7 +28,7 @@ if __name__ == '__main__':
     print 'Process start'
 
     rd = road.execRoad(InitCar, vmax, 2000, enterflag=True, lanes=3)
-    print rd
+    rd.set_exec_rule('A')
     #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
     #rd.setConnectTo(rd2)
     #rd.cycleBoundaryCondition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
