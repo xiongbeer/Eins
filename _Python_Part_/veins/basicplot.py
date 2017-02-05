@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import basicroad as br
+import road as br
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
@@ -26,15 +26,16 @@ class BasicLayer(object):
 
 class RoadPlot(object):
     '绘制直线跑道'
-    def __init__(self, rX_, rY_, road_, plotLayer_, width_ = 20):
-        self.rX = rX_                                                   #道路起点和终点的X坐标
+    def __init__(self, rX, rY, roadbox, plotLayer, width = 20):
+        self.rX = rX                                                   #道路起点和终点的X坐标
         #由于绘图时xlim,ylim不一样,这里要重新映射rY
-        self.rY = 62.5*rY_/100.0                                        #道路起点和终点的Y坐标
+        self.rY = 62.5*rY/100.0                                        #道路起点和终点的Y坐标
 
 
-        self.width = width_                                             #道路宽度的绘图倍数
-        self.road = road_                                               #指向要绘出的道路
-        self.plotLayer = plotLayer_                                     #指向要绘画的图层
+        self.width = width                                             #道路宽度的绘图倍数
+        self.road = roadbox[-1]                                               #指向要绘出的道路
+        self.roadbox = roadbox
+        self.plotLayer = plotLayer                                     #指向要绘画的图层
         self.scat = self.plotLayer.scatter([0], [0], s = 1)
 
         #计算坐标偏移量
@@ -54,7 +55,8 @@ class RoadPlot(object):
             self.scat.set_offsets(self.getPlotInfo())
             if color_:                                                      #如果color_为True,则会根据车辆的当前速度与最大速度为其绘制颜色
                 self.scat.set_edgecolors(self.getColorMap())
-            self.road.reflushStatus()
+            for road in self.roadbox:
+                road.reflush_status()
         else:
             pass
 
@@ -89,8 +91,8 @@ class RoadPlot(object):
 
     def getColorMap(self):
         collector = []
-        carbox = self.road.getCarsInfo()
-        vmax = self.road.getRoadVMax()
+        carbox = self.road.get_cars()
+        vmax = self.road.get_road_vmax()
         for lane in carbox:
             for car in lane:
                 if car.name != 'default':
@@ -118,7 +120,7 @@ class RoadPlot(object):
         index = 0
         #---
         for locate in self.road.get_cars_locate():
-            mapping = locate/self.road.getRoadLength()                 #映射比率值
+            mapping = locate/self.road.get_road_length()                 #映射比率值
             plotX = mapping*((self.rX[1] - self.rX[0])) + self.rX[0]
             #---
             plotY = mapping*((self.rY[1] - self.rY[0])) + self.rY[0] + index*3

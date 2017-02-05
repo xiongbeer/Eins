@@ -26,17 +26,19 @@ if __name__ == '__main__':
 
 
     print 'Process start'
+    rd0 = road.execRoad(InitCar, vmax, 2000, enterflag=True, lanes=3)
 
-    rd = road.execRoad(InitCar, vmax, 2000, enterflag=True, lanes=3)
-    rd.set_exec_rule('A')
+    rd = road.execRoad(EmptyCar, vmax, 2000, lanes=3)
+    rd0.setConnectTo(rd)
+
     #rd2 = br.Road(br.initEmptyRoad(2), vmax, 500, lanes_=2)
     #rd.setConnectTo(rd2)
     #rd.cycleBoundaryCondition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
-    rd.timeBoundaryCondition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
+    rd0.timeBoundaryCondition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
     #rd.addCarAutomaticByBound(True, carTemp)
 
-    #bp.addRoad(np.array([0.0, 100.0]), np.array([50.0, 50.0]), rd)
-    #bp.plot()
+    bp.addRoad(np.array([0.0, 100.0]), np.array([50.0, 50.0]), [rd0, rd])
+    bp.plot()
 
 
     '''
