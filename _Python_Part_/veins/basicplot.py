@@ -33,7 +33,7 @@ class RoadPlot(object):
 
 
         self.width = width                                             #道路宽度的绘图倍数
-        self.road = roadbox[-1]                                               #指向要绘出的道路
+        self.road = roadbox[0]                                               #指向要绘出的道路
         self.roadbox = roadbox
         self.plotLayer = plotLayer                                     #指向要绘画的图层
         self.scat = self.plotLayer.scatter([0], [0], s = 1)

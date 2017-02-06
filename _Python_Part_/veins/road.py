@@ -11,6 +11,8 @@ import copy
 KKWModel = {
 
 }
+
+
 #不作为类,用作为结构体,记录车的各种参数
 class Car(object):
     def __init__(self):
@@ -38,9 +40,9 @@ class Road(object):
         self.carbox = carbox                    #道路上所有车辆及其具体状态和参数
         self.entercars = entercars              #已进入此路的车辆数
         self.leavecars = [0]*lanes              #离开此路的车辆数
-        self.vmax = vmax                        #道路最大车速
-        self.length = length                    #道路长度
-        self.lanes = lanes                      #车道数,默认为单车道
+        self.vmax = float(vmax)                        #道路最大车速
+        self.length = float(length)                    #道路长度
+        self.lanes = int(lanes)                      #车道数,默认为单车道
         self.endcars = np.array([])             #list的长度表示有多少车辆需要进入其他道路,键值为其速度
         self.enterflag = enterflag              #标记此道是否是入口,如果非入口,
                                                 #locate初始化值必须为[np.array([-1.0])],
@@ -69,6 +71,18 @@ class Road(object):
         if self.iterindex >= self.lanes:
             raise StopIteration
         return self.carbox[self.iterindex]
+
+    def shape(self):
+        output = []
+        for lane in self.carbox:
+            output.append(len(lane))
+        return output
+
+    def __len__(self):
+        output = 0
+        for lane in self.carbox:
+            output += len(lane)
+        return output
 
     #标记线内的为public func
     #-----------------------------------------------------
@@ -198,8 +212,13 @@ class execRoad(Road):
         self.VDRP0 = 0
 
         self.VEFlag = False
+        self.insertpostion = 0.0
 
     def __str__(self):
+        if self.connectRoad != None:
+            crid = str(hex(id(self.connectRoad)))
+        else:
+            crid = str(None)
         des =   '+===================+\n' + \
                 ' - 运行规则及道路HashValue：' + str(self.execRule)  + \
                 '\n - 车道数:'+str(self.lanes) + \
@@ -221,14 +240,15 @@ class execRoad(Road):
                     ' - 车辆数目' +':'+str(len(lane)) + \
                     ' - 平均车速：' + str(v) + \
                     ' - 已通过车辆数：' + str(self.leavecars[index])
+
         des +=  '\n'+' -  整体  - 车辆数目:'+str(sum(carsCounter)) + \
                 ' - 平均车速：' + str(whole) + \
                 ' - 已通过车辆数：' + str(sum(self.leavecars)) + \
                 '\n --------------------' + \
-                '\n - 连接道路：' + str(self.connectRoad) + \
+                '\n - 连接道路：' + crid + \
                 ' - 时间边界条件：' + str(self.autoAdderByTime) + \
                 ' - 循环边界条件：' + str(self.autoAdderSwitch) + \
-                '\n+===================+'
+                '\n+===================+\n'
         return des
 
     def set_exec_rule(self, rule):
@@ -295,6 +315,7 @@ class execRoad(Road):
         else:
             dn = 0.0
             distance = car.speed*2
+
         if car.speed + dn >= distance:
             d = max(0, distance - dn)
             car.speed = min(car.speed, d)
@@ -507,13 +528,13 @@ class execRoad(Road):
                 it = iter(lane)
                 while True:
                     try:
-                        opCar = next(it)
+                        opcar = next(it)
                         try:
                             nextCar = next(it)
                         except StopIteration:
                             nextCar = None
-                        if self.changeLane(opCar, nextCar) is True:
-                            changebox.append(opCar)
+                        if self.changeLane(opcar, nextCar) is True:
+                            changebox.append(opcar)
                     except StopIteration:
                         break
 
@@ -528,57 +549,74 @@ class execRoad(Road):
                 continue
             if len(self.carbox[lane]) >= 2:
                 for i in xrange(0, len(self.carbox[lane]) - 1):
-                    opCar = self.carbox[lane][i]
-                    opCar.lane = lane
+                    opcar = self.carbox[lane][i]
+                    opcar.lane = lane
                     nextCar = self.carbox[lane][i+1]
                     try:
                         next2Car = self.carbox[lane][i+2]
                     except:
                         next2Car = None
-                    speed = self.execRule(opCar, nextCar, next2Car)
+                    speed = self.execRule(opcar, nextCar, next2Car)
                     tempVSaver.append(speed)
-                    tempLocateSaver.append(opCar.locate + speed)
+                    tempLocateSaver.append(opcar.locate + speed)
             #最前的车单独计算
-            opCar = self.carbox[lane][-1]
-            opCar.lane = lane
+            opcar = self.carbox[lane][-1]
+            opcar.lane = lane
             nextCar = None
             next2Car = None
             
+            # 连接处的前方车辆判断
             if self.connectRoad != None:
-                oplane = self.getNextEnterLane(opCar.lane)
+                oplane = self.getNextEnterLane(opcar.lane)
                 info = self.connectRoad.get_cars()
-                if len(info[oplane]) > 0:
-                    nextCar = copy.deepcopy(info[oplane][0])
-                    nextCar.locate += self.length
-                    try:
-                        next2Car = copy.deepcopy(info[oplane][1])
-                        next2Car += self.length
-                    except:
-                        next2Car = None
 
-            speed = self.execRule(opCar, nextCar, next2Car)
+                if len(info[oplane]) == 0:
+                    pass
+                else:
+                    insertindex = 0
+                    for car in info[oplane]:
+                        if car.locate > self.insertpostion:
+                            break
+                        else:
+                            insertindex += 1
+                    num = len(info[oplane][insertindex:])
+                    if num == 0:
+                        pass
+                    elif num == 1:
+                        nextCar = copy.deepcopy(info[oplane][insertindex])
+                        nextCar.locate += (self.length - self.insertpostion)
+                    elif num > 1:
+                        nextCar = copy.deepcopy(info[oplane][insertindex])
+                        nextCar.locate += (self.length - self.insertpostion) 
+                        
+                        next2Car = copy.deepcopy(info[oplane][insertindex+1])
+                        next2Car.locate += (self.length - self.insertpostion)
+            
+
+            speed = self.execRule(opcar, nextCar, next2Car)
             tempVSaver.append(speed)
-            tempLocateSaver.append(opCar.locate + speed)
+            tempLocateSaver.append(opcar.locate + speed)
 
             endcars = []
             for i in xrange(len(tempVSaver)):
-                opCar = self.carbox[lane][i]
-                opCar.speed = tempVSaver[i]
-                opCar.locate = tempLocateSaver[i]
-                if opCar.locate >= self.length:
-                    endcars.append(opCar)
+                opcar = self.carbox[lane][i]
+                opcar.speed = tempVSaver[i]
+                opcar.locate = tempLocateSaver[i]
+                if opcar.locate >= self.length:
+                    endcars.append(opcar)
 
-            for opCar in endcars:
-                opCar.locate -= self.length
+            for opcar in endcars:
+                opcar.locate -= self.length
                 self.leavecars[lane] += 1
                 #如果出口连接了其他的道路,则自动将离开的车加入其入口
                 if self.connectRoad != None:
-                    self.connectRoad.addCar(opCar, opCar.lane)
+                    opcar.locate += self.insertpostion
+                    self.connectRoad.addCar(opcar, opcar.lane)
 
                 #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                 if self.autoAdderSwitch == True:
                     if self.pers == None:
-                        self.addCar(self.autoAdder[0], opCar.lane)
+                        self.addCar(self.autoAdder[0], opcar.lane)
                     else:
                          dice = np.random.random()
                          upper = 0.0
@@ -586,12 +624,12 @@ class execRoad(Road):
                          for i in xrange(len(self.pers)):
                             upper += self.pers[i]
                             if lower <= dice < upper:
-                                self.addCar(self.autoAdder[i], opCar.lane)
+                                self.addCar(self.autoAdder[i], opcar.lane)
                                 break
                             lower += self.pers[i]
-                self.carbox[lane].remove(opCar)
+                self.carbox[lane].remove(opcar)
 
-        self.reflushWaitLine()
+        self.reflush_wait_line()
         #如果有需要,按时间添加车辆的LOOP
         if self.autoAdderByTime == True:
             if self.autoAddTime == self.timer(get=True):
@@ -613,18 +651,18 @@ class execRoad(Road):
                             lower += self.pers[i]
 
 
-    def reflushWaitLine(self):
+    def reflush_wait_line(self):
         oplane = 0
         while(len(self.waitLine) != 0):
-            opCar = self.waitLine[0]
-            addCar = copy.deepcopy(opCar)
+            opcar = self.waitLine[0]
+            addCar = copy.deepcopy(opcar)
             if addCar.lane == oplane:
                 self.carbox[oplane].insert(0, addCar)
-                self.waitLine.remove(opCar)
+                self.waitLine.remove(opcar)
             elif addCar.lane > self.lanes:
                 oplane = np.random.random()*self.lanes
                 self.carbox[oplane].insert(0, addCar)
-                self.waitLine.remove(opCar)
+                self.waitLine.remove(opcar)
             else:
                 pass
 
@@ -633,11 +671,11 @@ class execRoad(Road):
             else:
                 oplane = 0
 
-    def changeLane(self, opCar, nextCar, Pignore=None):
-        dis = self.vmax + opCar.safedistance + opCar.length
+    def changeLane(self, opcar, nextCar, Pignore=None):
+        dis = self.vmax + opcar.safedistance + opcar.length
         #判断是否需要换道
-        if opCar.changeflag is True or opCar.lane - 1 < 0 or opCar.lane + 1 >= self.lanes \
-            or nextCar == None or nextCar.locate - opCar.locate > dis:
+        if opcar.changeflag is True or opcar.lane - 1 < 0 or opcar.lane + 1 >= self.lanes \
+            or nextCar == None or nextCar.locate - opcar.locate > dis:
             return False
         if Pignore != None:
             if np.random.random() > Pignore:
@@ -645,8 +683,8 @@ class execRoad(Road):
         carsLocate = self.get_cars_locate()
         insertIndex = 0
         # 左道优先
-        oplane = opCar.lane - 1
-        carsDistance = opCar.locate - carsLocate[oplane]
+        oplane = opcar.lane - 1
+        carsDistance = opcar.locate - carsLocate[oplane]
         carsInBound = carsDistance[abs(carsDistance) <= dis]
         negflag = False
         if carsInBound.size == 0:
@@ -657,15 +695,15 @@ class execRoad(Road):
                     insertIndex = index
                     break
 
-            opCar.changeflag = True
-            self.carbox[oplane].insert(insertIndex, opCar)
-            self.carbox[opCar.lane].remove(opCar)
-            opCar.lane = oplane
+            opcar.changeflag = True
+            self.carbox[oplane].insert(insertIndex, opcar)
+            self.carbox[opcar.lane].remove(opcar)
+            opcar.lane = oplane
             return True
 
         # 右道
-        oplane = opCar.lane + 1
-        carsDistance = opCar.locate - carsLocate[oplane]
+        oplane = opcar.lane + 1
+        carsDistance = opcar.locate - carsLocate[oplane]
         carsInBound = carsDistance[abs(carsDistance) <= dis]
         if carsInBound.size == 0:
             insertIndex = carsDistance.size
@@ -675,9 +713,9 @@ class execRoad(Road):
                 else:
                     insertIndex = index
                     break
-            opCar.changeflag = True
-            self.carbox[oplane].insert(insertIndex, opCar)
-            self.carbox[opCar.lane].remove(opCar)
+            opcar.changeflag = True
+            self.carbox[oplane].insert(insertIndex, opcar)
+            self.carbox[opcar.lane].remove(opcar)
             return True
 
         return False
@@ -716,8 +754,10 @@ class execRoad(Road):
         else:
             print 'Set add car automatic by time failed,there alreadly existed another mode'
 
-    def setConnectTo(self, road):
+    def setConnectTo(self, road, insertpostion=0):
         self.connectRoad = road
+        self.insertpostion = insertpostion
+
 
     #---------------------------------------------------
     def timer(self, get=False, reset=False):
@@ -731,7 +771,7 @@ class execRoad(Road):
     
     #TODO: 添加更真实的method
     def getNextEnterLane(self, oplane, method='simple'):
-        print (self.connectRoad)
+        
         if oplane >= self.connectRoad.lanes:
             return self.connectRoad.lanes - 1
         else:
@@ -797,7 +837,8 @@ def initEmptyRoad(lanes):
     return output
 
 #在指定长度上初始化指定数量的车辆,可以指定分布,默认线性均匀分布
-def initCarsDistributed(length, carTemplateBox, carsNum=None, lanes=1, dis='maxium', pers=None):
+def initCarsDistributed(length, carTemplateBox, carsNum=None, lanes=1, dis='normal', pers=None):
+    
     output = []
     if length <= 0:
         raise ValueError('InitFailed: Road length must greater than ZERO!')
@@ -845,3 +886,51 @@ def initCarsDistributed(length, carTemplateBox, carsNum=None, lanes=1, dis='maxi
             return output
         else:
             raise KeyError('InitFailed: ')
+    # 均匀填充
+    elif dis == 'normal':
+        output = []
+        for i in xrange(lanes):
+            output.append([])
+        if len(carTemplateBox) == 1 and pers == None:
+            adder = 0.0
+            oplane = 0
+        
+            while adder <= length:
+                newCar = copy.deepcopy(carTemplateBox[0])
+                newCar.locate = adder
+                newCar.lane = oplane
+                if oplane+1 < lanes:
+                    oplane += 1
+                else:
+                    oplane = 0
+                adder += (newCar.length + newCar.safedistance*2)
+                output[oplane].append(newCar)
+            return output
+        elif len(carTemplateBox) == len(pers):
+            if sum(pers) != 1.0:
+                raise ValueError('InitFailed:')
+            adder = 0.0
+            oplane = 0
+            while adder <= length:
+                dice = np.random.random()
+                upper = 0.0
+                lower = 0.0
+                for i in xrange(len(pers)):
+                    upper += pers[i]
+                    if lower <= dice < upper:
+                        newCar = copy.deepcopy(carTemplateBox[i])
+                        break
+                    lower += pers[i]
+                newCar.locate = adder
+                newCar.lane = oplane
+                if oplane+1 < lanes:
+                    oplane += 1
+                else:
+                    oplane = 0
+                adder += (newCar.length + newCar.safedistance*2)
+                output[oplane].append(newCar)
+            return output
+        else:
+            raise KeyError('InitFailed: ')
+    else:
+        raise KeyError('No such method')
