@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 import numpy as np
-import basicroad as br
+import road as br
 
 class RoadStatus(object):
     def __init__(self, road_, timeStep_ = 'sec'):
@@ -18,7 +18,7 @@ class RoadStatus(object):
             self.timeStep = 1*60*60*24
       
     def __str__(self):
-        des = '\n总体车流量('+self.timeUnit+'):'+str(self.meanTrafficVolume().sum())
+        des = '\n总体车流量('+self.timeUnit+'):'+str(sum(self.meanTrafficVolume()))
         return des
 
     #车流量=离开车数/单位时间

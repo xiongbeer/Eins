@@ -49,7 +49,7 @@ class RoadPlot(object):
         self.newXSet = self.rX[0] - self.xOffset
         self.newYSet = self.rY[0] + self.yOffset
 
-        self.lanes = self.road.getRoadLanes()
+        self.lanes = self.road.get_road_lanes()
     def plot(self, color_ = False, reflush_ = True):
         if reflush_:
             self.scat.set_offsets(self.getPlotInfo())
