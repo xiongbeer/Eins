@@ -77,7 +77,7 @@ class Layer(object):
             self.ax.set_xlim([0, self.planTime])
             self.ax.set_ylim([0, self.roadLength])
         else:
-            raise UnknowPlotModel
+            raise KeyError('Unknow Plot Model')
 
 #时空图绘制
 class TXPlot(object):

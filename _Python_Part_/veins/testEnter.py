@@ -29,9 +29,7 @@ if __name__ == '__main__':
     print 'Process start'
     rd0 = road.ExecRoad(InitCar, vmax, 100, enterflag=True, lanes=3)
     rd1 = road.ExecRoad(EmptyCar, vmax, 2000, lanes=3)
-    rd0.set_connect_to(rd1)
     rd = road.ExecRoad(EmptyCar2, vmax, 2000, lanes=4)
-    rd1.set_connect_to(rd)
 
     rd0.set_connect_to(rd1)
     rd1.set_connect_to(rd, 1000)
@@ -40,16 +38,16 @@ if __name__ == '__main__':
     #rd.cycle_boundary_condition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
     rd0.time_boundary_condition(True, [carTemp], timeStep=1, nums=3)
 
-    bp.addRoad(np.array([0.0, 100.0]), np.array([50.0, 50.0]), [rd, rd1, rd0])
-    bp.plot()
+    #bp.addRoad(np.array([0.0, 100.0]), np.array([50.0, 50.0]), [rd, rd1, rd0])
+    #bp.plot()
 
 
-    '''
+    
     for i in xrange(0,plantime):
         print i,'s'
         for road in [rd0, rd1, rd]:
-            print road.get_cars_v()
+            print road.head
             road.reflush_status()
-    '''
+    
     
     print 'Done'

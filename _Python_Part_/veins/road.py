@@ -3,7 +3,7 @@
 
 import numpy as np
 import copy
-
+import math
 
 KKWModel = {
 
@@ -33,7 +33,7 @@ class Road(object):
     'Road && Cars'
 
     def __init__(self, carbox, vmax, length, lanes=1,
-                 entercars=0, enterflag=False, connectRoad=None, exitflag=False):
+                 entercars=0, enterflag=False, connectroad=None, exitflag=False, roadname='default'):
         self.carbox = carbox                    #道路上所有车辆及其具体状态和参数
         self.entercars = entercars              #已进入此路的车辆数
         self.leavecars = [0]*lanes              #离开此路的车辆数
@@ -50,14 +50,14 @@ class Road(object):
         self.autoAdderSwitch = False            #是否自动添加车辆
         self.autoAdderByTime = False            #是否按时间自动添加车辆,与前一个Flag冲突
         self.autoAdderBox = None                #自动添加车辆的初始速度
-        self.connectRoad = connectRoad          #连接的公路(入口),默认值为空
+        self.connectroad = connectroad          #连接的公路(入口),默认值为空
         self.autoAddTime = 0                    #用户定义的自动添加车辆的时间间隔
         self.timeCounter = 0                    #系统内部用于自动添加车辆的时间计数器
         self.wholeTime = 0                      #总的运行时间
         self.stableP = 0.4                      #固定减速因子,一旦设定,那么alpha和beta就会失效
         self.waitLine = []                      #等待添加的车辆列队
         self.pers = None
-
+        self.roadname = roadname
     def __iter__(self):
         self.iterindex = -1
         return self
@@ -182,9 +182,9 @@ class Road(object):
 
 class ExecRoad(Road):
     def __init__(self, carbox, vmax, length, lanes=1,
-                 entercars=0, enterflag=False, connectRoad=None, exitflag=False):
+                 entercars=0, enterflag=False, connectroad=None, exitflag=False, roadname='default'):
         super(ExecRoad, self).__init__(carbox, vmax, length, lanes, \
-                entercars, enterflag, connectRoad, exitflag)
+                entercars, enterflag, connectroad, exitflag, roadname)
 
         self.set_MCD_para()
         self.execRule = self.NS
@@ -204,9 +204,15 @@ class ExecRoad(Road):
         self.insertpostion = 0.0
         self.nextlanemethod = 'simple'
 
+        self.headcountflag = True
+        self.headfont = [0]*self.lanes
+        self.head = []
+        for i in xrange(self.lanes):
+            self.head.append([])
+
     def __str__(self):
-        if self.connectRoad != None:
-            crid = str(hex(id(self.connectRoad)))
+        if self.connectroad != None:
+            crid = str(hex(id(self.connectroad)))
         else:
             crid = str(None)
         des =   '+===================+\n' + \
@@ -254,6 +260,9 @@ class ExecRoad(Road):
             self.execRule = self.KKW
         else:
             raise KeyError('No that exec rule')
+
+    def get_head_t(self):
+        return self.head
 
     def set_MCD_para(self, h=6, gap=7, pb=0.94, p0=0.5, \
                     pd=0.1, tc=10):
@@ -557,11 +566,10 @@ class ExecRoad(Road):
             nextCar = None
             next2Car = None
             
-            #TODO: 不是首位相连时，加入车道不应该直接对应
             # 连接处的前方车辆判断
-            if self.connectRoad != None:
+            if self.connectroad != None:
                 oplane = self.get_next_enter_lane(opcar.lane)
-                info = self.connectRoad.get_cars()[oplane]
+                info = self.connectroad.get_cars()[oplane]
 
                 if len(info) == 0:
                     pass
@@ -580,11 +588,11 @@ class ExecRoad(Road):
                         nextCar.locate += (self.length - self.insertpostion)
                     elif num > 1:
                         nextCar = copy.deepcopy(info[insertindex])
-                        nextCar.locate += (self.length - self.insertpostion) 
-                        
+                        nextCar.locate += (self.length - self.insertpostion)
+
                         next2Car = copy.deepcopy(info[insertindex+1])
                         next2Car.locate += (self.length - self.insertpostion)
-            
+
 
             speed = self.execRule(opcar, nextCar, next2Car)
             tempVSaver.append(speed)
@@ -598,23 +606,39 @@ class ExecRoad(Road):
                 if opcar.locate >= self.length:
                     endcars.append(opcar)
 
+            # 计算时间车头距的指标
+            if self.headcountflag is True:
+                foo = len(endcars)
+                if foo > 1:
+                    for i in xrange(foo-1):
+                        self.head[lane].append(0)
+                    self.headfont[lane] = self.wholeTime
+                elif foo == 1:
+                    self.head[lane].append(self.wholeTime - self.headfont[lane])
+                    self.headfont[lane] = self.wholeTime
+
             for opcar in endcars:
                 opcar.locate -= self.length
                 self.leavecars[lane] += 1
                 #如果出口连接了其他的道路,则自动将离开的车加入其入口
-                if self.connectRoad != None:
+                if self.connectroad != None:
                     opcar.locate += self.insertpostion
-                    self.connectRoad.add_car(opcar, opcar.lane)
+                    if self.nextlanemethod == 'simple':
+                        self.connectroad.add_car(opcar, opcar.lane)
+                    elif self.nextlanemethod == 'left':
+                        self.connectroad.add_car(opcar, 0)
+                    elif self.nextlanemethod == 'right':
+                        self.connectroad.add_car(opcar, self.connectroad.get_road_lanes()-1)
 
                 #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                 if self.autoAdderSwitch == True:
                     if self.pers == None:
                         self.add_car(self.autoAdder[0], opcar.lane)
                     else:
-                         dice = np.random.random()
-                         upper = 0.0
-                         lower = 0.0
-                         for i in xrange(len(self.pers)):
+                        dice = np.random.random()
+                        upper = 0.0
+                        lower = 0.0
+                        for i in xrange(len(self.pers)):
                             upper += self.pers[i]
                             if lower <= dice < upper:
                                 self.add_car(self.autoAdder[i], opcar.lane)
@@ -749,7 +773,7 @@ class ExecRoad(Road):
             print 'Set add car automatic by time failed,there alreadly existed another mode'
 
     def set_connect_to(self, road, insertpostion=0):
-        self.connectRoad = road
+        self.connectroad = road
         self.insertpostion = insertpostion
 
 
@@ -763,70 +787,22 @@ class ExecRoad(Road):
         else:
             self.timeCounter += 1
     
-    #TODO: 添加更真实的method
+
     def get_next_enter_lane(self, oplane):
         if self.nextlanemethod == 'simple':
-            if oplane >= self.connectRoad.lanes:
-                return self.connectRoad.lanes - 1
+            if oplane >= self.connectroad.lanes:
+                return self.connectroad.lanes - 1
             else:
                 return oplane
         elif self.nextlanemethod == 'right':
-            return self.connectRoad.lanes - 1
+            return self.connectroad.lanes - 1
         elif self.nextlanemethod == 'left':
             return 0
         else:
             raise KeyError('No such method')
-
-class ProcessWriter(object):
-    def __init__(self, road, label, plantime):
-        self.road = road
-        self.label = label
-        self.savePath = r'./'+'ProcessInfo_'+label+r'.csv'
-        self.setFlag = False
-        self.outputFlow = None
-        self.plantime = plantime
-
-    def reSetPath(self, path):
-        if self.setFlag != True:
-            self.savePath = path
-        else:
-            print 'alreadly init'
-
-    def setInit(self):
-        if self.setFlag is not True:
-            self.outputFlow = open(self.savePath,'w+')
-            self.outputFlow.write('Time Locate V\n')
-            self.outputFlow.write(str(self.plantime) + ' ' + str(self.road.get_road_lanes()) + ' ' +
-                    str(self.road.getRoadLength()) + '\n')
-            self.setFlag = True
-        else:
-            pass
-
-    def writeInfo(self):
-        if self.setFlag is True:
-            flag = False
-            carbox = self.road.getCarsInfo()
-            outputLocate = ''
-            outputV = ''
-            for lane in carbox:
-                if flag is False:
-                    flag = True
-                else:
-                    outputLocate += ':'
-                    outputV += ':'
-                for i in xrange(len(lane)):
-                    outputLocate += (str(round(lane[i].locate, FLOAT_PREC)))
-                    outputV += (str(round(lane[i].speed, FLOAT_PREC)))
-                    if i != len(lane)-1:
-                        outputLocate += ','
-                        outputV += ','
-            #这里的-1只是一个占位符号,并没有实际用处,作用是防止在只有一辆车的时候pandas读取报错
-            if outputLocate != '':
-                self.outputFlow.write(str(self.road.getExecTime())+' '+'-1,'+outputLocate+' '+'-1,'+outputV+'\n')
-        else:
-            raise 'write failed'
-    def cleanAll(self):
-        self.outputFlow.close()
+    
+    def set_next_lane_method(self, method):
+        self.nextlanemethod = method 
 
 def init_empty_road(lanes):
     if lanes <= 0 :
