@@ -779,12 +779,12 @@ class ExecRoad(Road):
 
     #---------------------------------------------------
     def timer(self, get=False, reset=False):
-        self.wholeTime += 1
         if get == True:
             return self.timeCounter
         if reset == True:
             self.timeCounter = 0
         else:
+            self.wholeTime += 1
             self.timeCounter += 1
     
 
