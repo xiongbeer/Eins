@@ -6,7 +6,7 @@ import road
 import pandas as pd
 import copy 
 import statistics as ss
-plantime = 5000
+plantime = 600
 carsNum = 30
 vmax = 20.0
 carTemp = road.Car()
@@ -29,20 +29,21 @@ if __name__ == '__main__':
 
     print 'Process start'
     rd = road.ExecRoad(InitCar, vmax, 2000, enterflag=True, lanes=3)
+    rd1 = road.ExecRoad(EmptyCar, vmax, 2000, enterflag=True, lanes=3)
+    rd.set_connect_to(rd1)
     rds = ss.RoadStatus(rd, 'head')
     
 
     #rd.cycle_boundary_condition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
     rd.time_boundary_condition(True, [carTemp], timeStep=1, nums=3)
-
-    #bp.addRoad(np.array([0.0, 100.0]), np.array([50.0, 50.0]), [rd, rd1, rd0])
-    #bp.plot()
-
-
-    
-    for i in xrange(0,plantime):
-        print rds.get_flux()
+    '''
+    for i in xrange(plantime):
         rd.reflush_status()
-    
+        rd1.reflush_status()
+        print rd1.get_cars_v()[0]
+        print '---------------'
+        print rd1.get_mean_speed()
+    '''
+    ss.road_runner([rd, rd1], plantime, './test.xlsx', timestep='min')
     
     print 'Done'
