@@ -4,6 +4,7 @@
 import numpy as np
 import copy
 import math
+import tips
 
 KKWModel = {
 
@@ -839,7 +840,7 @@ def init_cars_distributed(length, carTemplateBox, carsNum=None, lanes=1, dis='no
     if length <= 0:
         raise ValueError('InitFailed: Road length must greater than ZERO!')
     if carsNum <= 0 and carsNum != None:
-        raise ValueError('InitFailed: Cars num must greater than ZERO! ')
+        raise ValueError(tips.get_red_warning('InitFailed: Cars num must greater than ZERO! '))
 
     #if type(carTemplateBox) != list or type(carTemplateBox[0]) != type(Car):
     #    raise 'InitFailed: Unkonw car template type'

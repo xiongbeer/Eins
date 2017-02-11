@@ -4,11 +4,13 @@ import pandas as pd
 import numpy as np
 import copy
 
-KEY = {'ROAD_HASH_ID':[],'LANE_NUMBER':[],'TIME_STAMP':[],'AVR_SPEED':[],'FLUX':[],'DENSITY':[],'CARS_NUM':[],'LEAVE_CARS':[]}
+KEY = {'ROAD_HASH_ID':[],'LANE_ID':[],'TIME_STAMP':[],'AVR_SPEED':[],'FLUX':[],'DENSITY':[],'CARS_NUM':[],'LEAVE_CARS':[]}
 PREC =  3   # 精度
 def road_runner(roadbox, exectime, savepath, timestep='sec'):
     roadstbox = []
-    data = pd.DataFrame(KEY)
+    summarydata = pd.DataFrame(KEY)
+    tsdata = pd.DataFrame({'ROAD_HASH_ID':[], 'LANE_ID':[], 'TIME_STAMP':[], 'LOCATE':[]})
+    writer = pd.ExcelWriter(savepath)
     for road in roadbox:
         rds = RoadStatus(road,timestep=timestep)
         roadstbox.append(rds)
@@ -18,9 +20,12 @@ def road_runner(roadbox, exectime, savepath, timestep='sec'):
         for stat in roadstbox:
             temp = stat.summary()
             if len(temp) != 0:
-                data = pd.merge(data, temp, how='outer')
-    data.to_excel(savepath)
-
+                summarydata = summarydata.append(temp)
+            temp = stat.get_time_space()
+            tsdata = tsdata.append(temp)
+    summarydata.to_excel(writer, 'SummaryData')
+    tsdata.to_excel(writer, 'SpaceTimeData')
+    writer.save()
 class RoadStatus(object):
     def __init__(self, road, method='normal', timestep='sec'):
         self.road = road
@@ -51,6 +56,17 @@ class RoadStatus(object):
             self.timecounter = 1
             return False
 
+    def get_time_space(self):
+        df = pd.DataFrame({'ROAD_HASH_ID':[], 'LANE_ID':[], 'TIME_STAMP':[], 'LOCATE':[]})
+        LOCATE = []
+        locatedata = self.road.get_cars_locate()
+        for i in xrange(self.lanes):
+            LOCATE.append(locatedata[i])
+        df['LOCATE'] = LOCATE
+        df['ROAD_HASH_ID'] = [self.hashid]*self.lanes
+        df['LANE_ID'] = range(self.lanes)
+        df['TIME_STAMP'] = [self.road.get_exec_time()]*self.lanes
+        return df
 
     def summary(self):
         AVRSPEED= []
@@ -65,8 +81,6 @@ class RoadStatus(object):
         data_speed = self.road.get_mean_speed()
         data_num = self.road.get_cars_num()
         output = pd.DataFrame(KEY)
-
-        
 
         # 速度需要手动累加
         for i in xrange(self.lanes):
@@ -131,3 +145,5 @@ class RoadStatus(object):
             for i in xrange(self.lanes+1):
                 self.SPEED.append([])
         return output
+
+        
