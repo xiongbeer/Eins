@@ -23,9 +23,10 @@ def road_runner(roadbox, exectime, savepath, timestep='sec'):
                 summarydata = summarydata.append(temp)
             temp = stat.get_time_space()
             tsdata = tsdata.append(temp)
-    summarydata.to_excel(writer, 'SummaryData')
-    tsdata.to_excel(writer, 'SpaceTimeData')
+    summarydata.to_excel(writer, 'SummaryData', index=False)
+    tsdata.to_excel(writer, 'SpaceTimeData', index=False)
     writer.save()
+
 class RoadStatus(object):
     def __init__(self, road, method='normal', timestep='sec'):
         self.road = road
@@ -133,7 +134,7 @@ class RoadStatus(object):
             self.perlanedata['flux'] = copy.deepcopy(data_leave)
             self.perwhole['flux'] = sum(data_leave)
             output['ROAD_HASH_ID'] = HASHID
-            output['LANE_NUMBER'] = LANENUMBER
+            output['LANE_ID'] = LANENUMBER
             output['TIME_STAMP'] = TIMESTAMP
             output['AVR_SPEED'] = AVRSPEED
             output['FLUX'] = FLUX

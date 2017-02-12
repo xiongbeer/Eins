@@ -646,8 +646,9 @@ class ExecRoad(Road):
                 #如果需要自动添加车辆,每离开一辆车就自动在起始初添加一辆车(一般用于入口)
                 if self.autoAdderSwitch == True:
                     if self.pers == None:
-                        if len(self.carbox[oplane]) == 0 or \
-                                self.carbox[oplane][0].locate > self.autoAdder[0].length + self.autoAdder[0].safedistance:
+                        if len(self.carbox[lane]) == 0 or \
+                                self.carbox[lane][0].locate > self.autoAdder[0].length + \
+                                self.autoAdder[0].safedistance:
                             self.add_car(self.autoAdder[0], opcar.lane)
                     else:
                         dice = np.random.random()
@@ -656,8 +657,9 @@ class ExecRoad(Road):
                         for i in xrange(len(self.pers)):
                             upper += self.pers[i]
                             if lower <= dice < upper:
-                                if len(self.carbox[oplane]) == 0 or \
-                                    self.carbox[oplane][0].locate > self.autoAdder[i].length + self.autoAdder[i].safedistance:
+                                if len(self.carbox[lane]) == 0 or \
+                                    self.carbox[lane][0].locate > self.autoAdder[i].length + \
+                                    self.autoAdder[i].safedistance:
                                     self.add_car(self.autoAdder[i], opcar.lane)
                                 break
                             lower += self.pers[i]
