@@ -6,7 +6,7 @@ import copy
 
 KEY = {'ROAD_HASH_ID':[],'LANE_ID':[],'TIME_STAMP':[],'AVR_SPEED':[],'FLUX':[],'DENSITY':[],'CARS_NUM':[],'LEAVE_CARS':[]}
 PREC =  3   # 精度
-def road_runner(roadbox, exectime, savepath, timestep='sec'):
+def road_runner(roadbox, exectime, savepath, timestep='sec', stdata=True, summarydata=True):
     roadstbox = []
     summarydata = pd.DataFrame(KEY)
     tsdata = pd.DataFrame({'ROAD_HASH_ID':[], 'LANE_ID':[], 'TIME_STAMP':[], 'LOCATE':[]})
@@ -18,11 +18,14 @@ def road_runner(roadbox, exectime, savepath, timestep='sec'):
         for road in roadbox:
             road.reflush_status()
         for stat in roadstbox:
-            temp = stat.summary()
-            if len(temp) != 0:
-                summarydata = summarydata.append(temp)
-            temp = stat.get_time_space()
-            tsdata = tsdata.append(temp)
+            if summarydata is True:
+                temp = stat.summary()
+                if len(temp) != 0:
+                    summarydata = summarydata.append(temp)
+            if stdata is True:
+                temp = stat.get_time_space()
+                tsdata = tsdata.append(temp)
+
     summarydata.to_excel(writer, 'SummaryData', index=False)
     tsdata.to_excel(writer, 'SpaceTimeData', index=False)
     writer.save()

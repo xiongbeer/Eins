@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 
-def read_data(path, oplane, roadid, savepath=None):
+def plot(path, oplane, roadid, savepath=None):
     data = pd.read_excel(path, 'SpaceTimeData')
     data = data[data['LANE_ID'] == oplane]
     data =  data[data['ROAD_HASH_ID'] == roadid]

@@ -647,8 +647,7 @@ class ExecRoad(Road):
                 if self.autoAdderSwitch == True:
                     if self.pers == None:
                         if len(self.carbox[lane]) == 0 or \
-                                self.carbox[lane][0].locate > self.autoAdder[0].length + \
-                                self.autoAdder[0].safedistance:
+                                self.carbox[lane][0].locate > self.autoAdder[0].length:
                             self.add_car(self.autoAdder[0], opcar.lane)
                     else:
                         dice = np.random.random()
@@ -658,14 +657,13 @@ class ExecRoad(Road):
                             upper += self.pers[i]
                             if lower <= dice < upper:
                                 if len(self.carbox[lane]) == 0 or \
-                                    self.carbox[lane][0].locate > self.autoAdder[i].length + \
-                                    self.autoAdder[i].safedistance:
+                                    self.carbox[lane][0].locate > self.autoAdder[i].length:
                                     self.add_car(self.autoAdder[i], opcar.lane)
                                 break
                             lower += self.pers[i]
                 self.carbox[lane].remove(opcar)
 
-        self.reflush_wait_line()
+        self.__reflush_wait_line()
 
         #如果有需要,按时间添加车辆的LOOP
         if self.autoAdderByTime == True:
@@ -676,7 +674,7 @@ class ExecRoad(Road):
                     oplane = int(np.random.random()*self.lanes)
                     if self.pers == None:
                         if len(self.carbox[oplane]) == 0 or \
-                                self.carbox[oplane][0].locate > self.autoAdder[0].length + self.autoAdder[0].safedistance:
+                                self.carbox[oplane][0].locate > self.autoAdder[0].length:
                             self.add_car(self.autoAdder[0], oplane)
                     else:
                         dice = np.random.random()
@@ -686,13 +684,13 @@ class ExecRoad(Road):
                             upper += self.pers[i]
                             if lower <= dice < upper:
                                 if len(self.carbox[oplane]) == 0 or \
-                                    self.carbox[oplane][0].locate > self.autoAdder[i].length + self.autoAdder[i].safedistance:
+                                    self.carbox[oplane][0].locate > self.autoAdder[i].length:
                                     self.add_car(self.autoAdder[i], oplane)
                                 break
                             lower += self.pers[i]
 
 
-    def reflush_wait_line(self):
+    def __reflush_wait_line(self):
         oplane = 0
         while(len(self.waitLine) != 0):
             opcar = self.waitLine[0]
