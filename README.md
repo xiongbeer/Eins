@@ -1,6 +1,6 @@
 ***
-![](./Source/logo-main.png)
-# Veins - Simulations of Traffic System Based on the Theory of Cellular Automaton
+![](./Source/logo.png)
+# einspy - Simulations of Traffic System Based on the Theory of Cellular Automaton
 ***
 
 *十分抱歉.....此项目是我个人闲暇之余写的项目，没想到大家做美赛竟然会搜到，那段时间我也在忙着比赛...没能帮上大家的忙实在是让我愧疚，库的python部分和使用文档会在寒假期间尽量完成，另祝大家新年快乐～～*
@@ -12,7 +12,7 @@
 * 该项目旨在提供一个简易上手且功能丰富的元胞自动机交通模拟库
 
 ## 文档与教程
-[Veins-Docs](https://veinsdocs.readthedocs.io/en/latest/index.html)
+[einspy-Docs](https://veinsdocs.readthedocs.io/en/latest/index.html)
 
 
  ***
@@ -24,11 +24,16 @@
 ## 依赖
 * python 2.7
 * matplotlib
-* pandas
+* pandas>=0.19
 * numpy
+* colorama
+[options]
+* seaborn
 
 ## 安装
-目前只能clone  
-后续会推送到PyPi上  
+```
+pip install veinspy
+``` 
 
-
+## 其他
+另外一个[Veins](https://github.com/sommer/veins)专业和复杂的多，如果有更高层次需求不妨去看看

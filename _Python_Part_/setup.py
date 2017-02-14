@@ -5,7 +5,7 @@ import sys, os
 
 version = '1.0'
 
-setup(name='Veins',
+setup(name='Veinspy',
       version=version,
       description="Simulations of Traffic System Based on the Theory of Cellular Automaton",
       long_description="""\
