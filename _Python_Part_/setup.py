@@ -3,9 +3,9 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.0'
+version = '0.1'
 
-setup(name='Veinspy',
+setup(name='EinsPy',
       version=version,
       description="Simulations of Traffic System Based on the Theory of Cellular Automaton",
       long_description="""\
@@ -18,17 +18,16 @@ setup(name='Veinspy',
             "Programming Language :: Python :: 2.7",
             "Topic :: Scientific/Engineering :: Mathematics"
       ],
-      keywords='',
       author='xiongbeer',
       author_email='xiongshaoliu@163.com',
-      url='https://github.com/xiongbeer/Veins',
+      url='https://github.com/xiongbeer/Eins',
       license='MIT',
-      packages=find_packages('veins'),
+      packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
       install_requires=[
           # -*- Extra requirements: -*-
-          'pandas>=0.19',
+          'pandas',
           'matplotlib',
           'numpy',
           'colorama'

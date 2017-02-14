@@ -130,7 +130,6 @@ class RoadPlot(object):
         return output
 #-----------------------------------------------------------------------------
 '绘制动画'
-layer = BasicLayer()
 roadList = []
 
 def addRoad(xlim_, ylim_, road_):
@@ -144,6 +143,7 @@ def update(frame_number):
 
 def plot():
     'Waring: Cannot stop this,once started'
+    layer = BasicLayer()
     animation = FuncAnimation(layer.getLayer(), update, interval = 10)
     plt.show()
 #----------------------------------------------------------------------------
