@@ -26,7 +26,8 @@
 * matplotlib
 * pandas>=0.19
 * numpy
-* colorama
+* colorama  
+
 [options]
 * seaborn
 
