@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import eins
+#import eins
 
 print 'Hei travis-ci'
