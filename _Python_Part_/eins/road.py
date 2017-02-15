@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding=utf-8
-
+from __future__ import division
 import numpy as np
 import copy
 import math
-import tips
+import _tips
 
 KKWModel = {
 
@@ -578,7 +578,7 @@ class ExecRoad(Road):
             opcar.lane = lane
             nextCar = None
             next2Car = None
-            
+
             # 连接处的前方车辆判断
             if self.connectroad != None:
                 oplane = self.__get_next_enter_lane(opcar.lane)
@@ -820,14 +820,14 @@ class ExecRoad(Road):
         elif self.nextlanemethod == 'left':
             return 0
         else:
-            raise KeyError('No such method')
+            raise KeyError(_tips.INFO('No such method', 'RED'))
 
     def set_next_lane_method(self, method):
-        self.nextlanemethod = method 
+        self.nextlanemethod = method
 
 def init_empty_road(lanes):
     if lanes <= 0 :
-        raise 'InitFailed: lanes must greater than ZERO!'
+        raise _tips.INFO('InitFailed: lanes must greater than ZERO!', 'RED')
     output = []
     for i in xrange(lanes):
         output.append([])
@@ -835,12 +835,12 @@ def init_empty_road(lanes):
 
 #在指定长度上初始化指定数量的车辆,可以指定分布,默认线性均匀分布
 def init_cars_distributed(length, carTemplateBox, carsNum=None, lanes=1, dis='normal', pers=None):
-    
+
     output = []
     if length <= 0:
-        raise ValueError('InitFailed: Road length must greater than ZERO!')
+        raise ValueError(_tips.INFO('InitFailed: Road length must greater than ZERO!', 'RED'))
     if carsNum <= 0 and carsNum != None:
-        raise ValueError(tips.get_red_warning('InitFailed: Cars num must greater than ZERO! '))
+        raise ValueError(_tips.INFO('InitFailed: Cars num must greater than ZERO! ', 'RED'))
 
     #if type(carTemplateBox) != list or type(carTemplateBox[0]) != type(Car):
     #    raise 'InitFailed: Unkonw car template type'
@@ -861,7 +861,7 @@ def init_cars_distributed(length, carTemplateBox, carsNum=None, lanes=1, dis='no
             return output
         elif len(carTemplateBox) == len(pers):
             if sum(pers) != 1.0:
-                raise ValueError('InitFailed:')
+                raise ValueError(_tips.INFO('InitFailed: sum of per must be 1.0', 'RED'))
             for lane in xrange(lanes):
                 adder = 0.0
                 temp = []
@@ -882,7 +882,7 @@ def init_cars_distributed(length, carTemplateBox, carsNum=None, lanes=1, dis='no
                 output.append(temp)
             return output
         else:
-            raise KeyError('InitFailed: ')
+            raise KeyError(_tips.INFO("InitFailed: len(carTemplateBox) != len(pers)", 'RED'))
     # 均匀填充
     elif dis == 'normal':
         output = []
@@ -891,7 +891,7 @@ def init_cars_distributed(length, carTemplateBox, carsNum=None, lanes=1, dis='no
         if len(carTemplateBox) == 1 and pers == None:
             adder = 0.0
             oplane = 0
-        
+
             while adder <= length:
                 newCar = copy.deepcopy(carTemplateBox[0])
                 newCar.locate = adder
@@ -905,7 +905,7 @@ def init_cars_distributed(length, carTemplateBox, carsNum=None, lanes=1, dis='no
             return output
         elif len(carTemplateBox) == len(pers):
             if sum(pers) != 1.0:
-                raise ValueError('InitFailed:')
+                raise ValueError(_tips.INFO('InitFailed: sum of per must be 1.0', 'RED'))
             adder = 0.0
             oplane = 0
             while adder <= length:
@@ -928,6 +928,6 @@ def init_cars_distributed(length, carTemplateBox, carsNum=None, lanes=1, dis='no
                 output[oplane].append(newCar)
             return output
         else:
-            raise KeyError('InitFailed: ')
+            raise KeyError(_tips.INFO("InitFailed: len(carTemplateBox) != len(pers)", 'RED'))
     else:
-        raise KeyError('No such method')
+        raise KeyError(_tips.INFO('No such method', 'RED'))

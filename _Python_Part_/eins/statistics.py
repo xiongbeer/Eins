@@ -1,12 +1,33 @@
 #!/usr/bin/env python
 # coding=utf-8
+from __future__ import division
 import pandas as pd
 import numpy as np
 import copy
+import _tips
+from tqdm import tqdm, trange
 
 KEY = {'ROAD_HASH_ID':[],'LANE_ID':[],'TIME_STAMP':[],'AVR_SPEED':[],'FLUX':[],'DENSITY':[],'CARS_NUM':[],'LEAVE_CARS':[]}
 PREC =  3   # 精度
-def road_runner(roadbox, exectime, savepath, timestep='sec', stdata=True, summarydata=True):
+def road_runner(roadbox, exectime, savepath, timestep='sec', st=True, sm=True, bar=True, ownfun=None):
+    print _tips.INFO('Process start...', 'GREEN')
+
+    if ownfun != None and bar is False:
+            raise ValueError(_tips.INFO("ownfun isn't None while bar is False", 'RED'))
+
+    if bar is True:
+        loop = trange(exectime)
+        info_d = loop.set_description
+        info_p = loop.set_postfix
+        info_r = loop.refresh
+        info_w = loop.write
+    else:
+        loop = range(exectime)
+        info_d = empty
+        info_p = empty
+        info_r = empty
+        info_w = empty
+
     roadstbox = []
     summarydata = pd.DataFrame(KEY)
     tsdata = pd.DataFrame({'ROAD_HASH_ID':[], 'LANE_ID':[], 'TIME_STAMP':[], 'LOCATE':[]})
@@ -14,22 +35,35 @@ def road_runner(roadbox, exectime, savepath, timestep='sec', stdata=True, summar
     for road in roadbox:
         rds = RoadStatus(road,timestep=timestep)
         roadstbox.append(rds)
-    for i in xrange(exectime):
-        for road in roadbox:
-            road.reflush_status()
-        for stat in roadstbox:
-            if summarydata is True:
-                temp = stat.summary()
-                if len(temp) != 0:
-                    summarydata = summarydata.append(temp)
-            if stdata is True:
-                temp = stat.get_time_space()
-                tsdata = tsdata.append(temp)
 
+    info_p(stdata=str(st), summarydata=str(sm))
+    info_d(_tips.INFO('Collecting data', 'GREEN'))
+    for i in loop:
+        try:
+            for road in roadbox:
+                road.reflush_status()
+            for stat in roadstbox:
+                if sm is True:
+                    temp = stat.summary()
+                    if len(temp) != 0:
+                        summarydata = summarydata.append(temp)
+                if st is True:
+                    temp = stat.get_time_space()
+                    tsdata = tsdata.append(temp)
+            if ownfun is not None:
+                info_w(ownfun())
+        except:
+            info_d(_tips.INFO('FAILED!', 'RED'))
+            info_r()
+            raise KeyError
+    print _tips.INFO('Start writing data...', 'BLUE')
     summarydata.to_excel(writer, 'SummaryData', index=False)
     tsdata.to_excel(writer, 'SpaceTimeData', index=False)
     writer.save()
+    print _tips.INFO('Done', 'GREEN')
 
+def empty(*args, **kwargs):
+    pass
 class RoadStatus(object):
     def __init__(self, road, method='normal', timestep='sec'):
         self.road = road
@@ -149,5 +183,3 @@ class RoadStatus(object):
             for i in xrange(self.lanes+1):
                 self.SPEED.append([])
         return output
-
-        

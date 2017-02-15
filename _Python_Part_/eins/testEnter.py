@@ -2,12 +2,11 @@
 # coding=utf-8
 import numpy as np
 #import basicplot as bp
-import road 
+import road
 import pandas as pd
-import copy 
+import copy
 import statistics as ss
-import plot
-plantime = 6000
+plantime = 600
 carsNum = 30
 vmax = 5
 carTemp = road.Car()
@@ -25,15 +24,14 @@ InitCar = road.init_cars_distributed(
 EmptyCar = road.init_empty_road(lanes = 3)
 EmptyCar2 = road.init_empty_road(lanes = 4)
 
+
 if __name__ == '__main__':
 
-
-    print 'Process start'
     rd = road.ExecRoad(InitCar, vmax, 2000, enterflag=True, lanes=3)
     #rd1 = road.ExecRoad(EmptyCar, vmax, 2000, enterflag=True, lanes=3)
     #rd.set_connect_to(rd1)
     #rds = ss.RoadStatus(rd, 'head')
-    
+
 
     #rd.cycle_boundary_condition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
     rd.time_boundary_condition(True, [carTemp], timeStep=60, nums=3)
@@ -45,8 +43,6 @@ if __name__ == '__main__':
         print '---------------'
         print rd1.get_mean_speed()
     '''
-    #ss.road_runner([rd], plantime, './test.xlsx', timestep='min')
-    
-    plot.read_data('./test.xlsx', 'SummaryData', 0, '0x7f7b07ac3d50')
+    ss.road_runner([rd], plantime, './test.xlsx', timestep='min')
 
-    print 'Done'
+    #plot.read_data('./test.xlsx', 'SummaryData', 0, '0x7f7b07ac3d50')

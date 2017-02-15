@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import road
-import plot
-import statistics
-import testplot
+from . import road
+
+__version__ = '1.0 alpha'
+__author__ = {"github.com/": "xiongbeer"}
+__all__ = ['road', 'statistics']
