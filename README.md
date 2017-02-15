@@ -2,6 +2,7 @@
 ![](./Source/logo.png)
 # Einspy - Simulations of Traffic System Based on the Theory of Cellular Automaton
 ***
+[![Build Status](https://travis-ci.org/xiongbeer/Eins.svg?branch=master)](https://travis-ci.org/xiongbeer/Eins)
 
 *十分抱歉.....此项目是我个人闲暇之余写的项目，没想到大家做美赛竟然会搜到，那段时间我也在忙着比赛...没能帮上大家的忙实在是让我愧疚，库的python部分和使用文档会在寒假期间尽量完成，另祝大家新年快乐～～*
 
