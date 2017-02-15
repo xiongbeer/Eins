@@ -1,7 +1,5 @@
 ***
-<div align=center>
-![](./Source/logo.png)
-</div>
+<center>![](./Source/logo.png)</center>
 # Einspy - Simulations of Traffic System Based on the Theory of Cellular Automaton
 ***
 [![Build Status](https://travis-ci.org/xiongbeer/Eins.svg?branch=master)](https://travis-ci.org/xiongbeer/Eins)
