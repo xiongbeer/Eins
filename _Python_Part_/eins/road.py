@@ -37,7 +37,7 @@ class Road(object):
                  entercars=0, enterflag=False, connectroad=None, exitflag=False, roadname='default'):
         self.carbox = carbox                    #道路上所有车辆及其具体状态和参数
         self.entercars = entercars              #已进入此路的车辆数
-        self.leavecars = np.zeros(lanes)              #离开此路的车辆数
+        self.leavecars = np.zeros(lanes)        #离开此路的车辆数
         self.vmax = float(vmax)                 #道路最大车速
         self.length = float(length)             #道路长度
         self.lanes = int(lanes)                 #车道数,默认为单车道

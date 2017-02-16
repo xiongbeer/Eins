@@ -43,6 +43,6 @@ if __name__ == '__main__':
         print '---------------'
         print rd1.get_mean_speed()
     '''
-    ss.road_runner([rd], plantime, './test.xlsx', timestep='min')
+    ss.road_runner([rd], plantime, './test', timestep='min')
 
     #plot.read_data('./test.xlsx', 'SummaryData', 0, '0x7f7b07ac3d50')

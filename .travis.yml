@@ -8,5 +8,6 @@ install:
     - pip install pandas
     - pip install colorama
     - pip install tqdm
+    
 script:
     - python ./_Python_Part_/test.py

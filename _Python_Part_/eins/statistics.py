@@ -23,15 +23,15 @@ def road_runner(roadbox, exectime, savepath, timestep='sec', st=True, sm=True, b
         info_w = loop.write
     else:
         loop = range(exectime)
-        info_d = empty
-        info_p = empty
-        info_r = empty
-        info_w = empty
+        info_d = __empty
+        info_p = __empty
+        info_r = __empty
+        info_w = __empty
 
     roadstbox = []
     summarydata = pd.DataFrame(KEY)
     tsdata = pd.DataFrame({'ROAD_HASH_ID':[], 'LANE_ID':[], 'TIME_STAMP':[], 'LOCATE':[]})
-    writer = pd.ExcelWriter(savepath)
+    writer = pd.ExcelWriter(savepath+'.xlsx')
     for road in roadbox:
         rds = RoadStatus(road,timestep=timestep)
         roadstbox.append(rds)
@@ -62,7 +62,7 @@ def road_runner(roadbox, exectime, savepath, timestep='sec', st=True, sm=True, b
     writer.save()
     print _tips.INFO('Done', 'GREEN')
 
-def empty(*args, **kwargs):
+def __empty(*args, **kwargs):
     pass
 class RoadStatus(object):
     def __init__(self, road, method='normal', timestep='sec'):
