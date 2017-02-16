@@ -1,5 +1,5 @@
 ***
-<div align=center>![](./Source/logo.png)</div>
+![](./Source/logo.png)
 # Einspy - Simulations of Traffic System Based on the Theory of Cellular Automaton
 ***
 [![Build Status](https://travis-ci.org/xiongbeer/Eins.svg?branch=master)](https://travis-ci.org/xiongbeer/Eins)
@@ -25,13 +25,12 @@
 * pandas>=0.19
 * numpy
 * colorama  
-
-*[options]*
-* seaborn
+* tqdm
 
 ## 安装
 
 > pip install einspy
 
 ## 其他
-另外一个[Veins](https://github.com/sommer/veins)专业和复杂的多，如果有更高层次需求不妨去看看
+* 如有问题和需求请提issues，平时我极少看邮件
+* 另外一个[Veins](https://github.com/sommer/veins)专业和复杂的多，如果有更高层次需求不妨去看看
