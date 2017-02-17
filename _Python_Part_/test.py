@@ -9,7 +9,7 @@ if __name__ == '__main__':
     length = 1000
     exectime = 100
     lanes = 3
-    vmxa = 6
+    vmax = 6
 
     # define cars
     car = road.Car()
@@ -23,9 +23,9 @@ if __name__ == '__main__':
     emptybox = road.init_empty_road(lanes)
 
     # get road
-    rd = road.ExecRoad(length, carbox, vmax, lanes)
-    rd1 = road.ExecRoad(length, emptybox, vmax, lanes)
-    rd2 = road.ExecRoad(length, copy.deepcopy(emptybox), vmax, lanes)
+    rd = road.ExecRoad(carbox, vmax, length, lanes)
+    rd1 = road.ExecRoad(emptybox, vmax, length, lanes)
+    rd2 = road.ExecRoad(copy.deepcopy(emptybox), vmax, length, lanes)
 
     # define re
     rd.set_connect_to(rd1)
