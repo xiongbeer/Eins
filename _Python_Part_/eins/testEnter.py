@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 import numpy as np
-#import basicplot as bp
+import plot
 import road
 import pandas as pd
 import copy
@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
 
     #rd.cycle_boundary_condition(True, [carTemp, carTemp2], pers = [0.5, 0.5])
-    rd.time_boundary_condition(True, [carTemp], timeStep=60, nums=3)
+    rd.time_boundary_condition(True, [carTemp], timeStep=1, nums=3)
     '''
     for i in xrange(plantime):
         rd.reflush_status()
@@ -43,6 +43,6 @@ if __name__ == '__main__':
         print '---------------'
         print rd1.get_mean_speed()
     '''
-    ss.road_runner([rd], plantime, './test', timestep='min')
+    #ss.road_runner([rd], plantime, './test', sm=False)
 
-    #plot.read_data('./test.xlsx', 'SummaryData', 0, '0x7f7b07ac3d50')
+    plot.plot('./test', 0, '0x7f9def489110', './eg.jpg')
