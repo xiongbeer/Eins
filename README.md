@@ -15,6 +15,7 @@
 
  ***
 * A Ns Model Eg:
+![](./Source/demo.gif)
 ![](./Source/demo2.jpg)
 
  ***  
