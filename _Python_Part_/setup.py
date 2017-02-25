@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1'
+version = '1.1'
 
 setup(name='EinsPy',
       version=version,
@@ -30,7 +30,8 @@ setup(name='EinsPy',
           'pandas',
           'matplotlib',
           'numpy',
-          'colorama'
+          'colorama',
+          'tqdm'
       ],
       entry_points="""
       # -*- Entry points: -*-

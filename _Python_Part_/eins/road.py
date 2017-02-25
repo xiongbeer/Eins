@@ -6,9 +6,14 @@ import copy
 import math
 import _tips
 
-KKWModel = {
-
-}
+KKWModel = [
+    {'k':2.55, 'vp':14.0, 'pa1':0.2},
+    {'p':0.04, 'pa2':0.052},
+    {'p':0.055, 'pa2':0.085},
+    {'p':0.04, 'pa':0.052, 'beta':0.05},
+    {'p':0.04, 'beta':0.0},
+    {'d1':2.5, 'k':2.55, 'p':0.04, 'pa':0.052}
+]
 
 
 #不作为类,用作为结构体,记录车的各种参数
@@ -173,7 +178,7 @@ class Road(object):
         else:
             return None
 
-    def BJH(self, flag, ps):
+    def BJH(self, flag, ps): 
         if flag:
             return 1.0 - ps
         else:
@@ -307,7 +312,7 @@ class ExecRoad(Road):
     #最基础的NS模型
     def NS(self, car, nextCar, para):
         #step1:加速
-        if self.TTFlag:
+        if self.TTFlag is True:
             tempP = self.TT(car, nextCar, self.TTPt)
             if tempP == None or np.random.random() < tempP:
                 car.speed = min(car.speed + car.acc, self.vmax)
@@ -315,7 +320,7 @@ class ExecRoad(Road):
         else:
             car.speed = min(car.speed + car.acc, self.vmax)
 
-        if self.BJHFlag:
+        if self.BJHFlag is True:
             tempP = self.BJH(car.stoped, self.BJHPs)
             if np.random.random() < tempP:
                 car.speed = 0
@@ -337,7 +342,7 @@ class ExecRoad(Road):
                 car.stoped = True
 
         #step3:随机慢化
-        if self.VDRFlag:
+        if self.VDRFlag is True:
             tempP = self.VDR(car.stoped, self.VDRP0)
             if np.random.random() < tempP:
                 car.speed = max(car.speed - car.negacc, 0)
@@ -381,7 +386,7 @@ class ExecRoad(Road):
             if next2Car == None:
                 dnc = nextCar.speed + 1
             else:
-                dnc = next2Car.locate - nextCar.locate - (nextCar.length + next2Car.length)/2\
+                dnc = next2Car.locate - nextCar.locate - (nextCar.length + next2Car.length)/2 \
                      - nextCar.safedistance
             vanti = min(dnc, nextCar.speed)
             deff = max(dn + max(vanti - self.gap, 0), 0)
@@ -509,7 +514,7 @@ class ExecRoad(Road):
             else:
                 pb = model['p0']
         else:
-            print 'Unkonw modelKind'
+            raise KeyError(tips.INFO('Unkonw modelKind', 'RED'))
 
         vsafe = gn/self.tao
 
