@@ -9,12 +9,12 @@ def plot(path, oplane, roadid, savepath):
     data = pd.read_excel(path+'.xlsx', 'SpaceTimeData')
     data = data[data['LANE_ID'] == oplane]
     data =  data[data['ROAD_HASH_ID'] == roadid]
-    y, x = get_space_time_data(data)
+    y, x = __get_space_time_data(data)
     layer = ax.scatter(x, y, c='k', alpha=0.2, s=0.1, marker='x')
     plt.savefig(savepath, dpi=1000)
     return layer
 
-def get_space_time_data(data):
+def __get_space_time_data(data):
     locate = []
     time = []
     row, col = data.shape

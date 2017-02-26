@@ -128,7 +128,7 @@ class Road(object):
         return temp.size
 
     #考虑视野距离计算实时随机减速概率
-    def pcounter(self, carsNum, car):
+    def __pcounter(self, carsNum, car):
         A = (float(carsNum)/car.view)**self.alpha
         B = (car.speed/self.vmax)**self.beta
         return A*B
@@ -167,7 +167,7 @@ class Road(object):
     #=====================模型=========================
 
     #慢启动规则
-    def TT(self, car, nextCar, pt):
+    def __TT(self, car, nextCar, pt):
         if car.speed == 0:
             if nextCar != None:
                 if (car.length + nextCar.length)/2 +car.safedistance < nextCar.locate - car.locate \
@@ -178,20 +178,20 @@ class Road(object):
         else:
             return None
 
-    def BJH(self, flag, ps): 
+    def __BJH(self, flag, ps):
         if flag:
             return 1.0 - ps
         else:
             return 0
 
-    def VDR(self, flag, p0):
+    def __VDR(self, flag, p0):
         if flag == False:
             return self.stableP
         else:
             return p0
 
     #减速规则
-    def VE(self, car, nextCar, next2Car):
+    def __VE(self, car, nextCar, next2Car):
         dn = (car.length + nextCar.length)/2 + car.safedistance
         dnc = (nextCar.length + next2Car.length)/2 + nextCar.safedistance
         vc = min(self.vmax - car.acc, nextCar.speed, max(0, dnc - nextCar.acc))
@@ -205,7 +205,7 @@ class ExecRoad(Road):
                 entercars, enterflag, connectroad, exitflag, roadname)
 
         self.set_MCD_para()
-        self.execRule = self.NS
+        self.execRule = self.__NS
 
 
         self.TTFlag = False
@@ -268,14 +268,14 @@ class ExecRoad(Road):
         return des
 
     def set_exec_rule(self, rule):
-        if rule == 'NS':
-            self.execRule = self.NS
-        elif rule == 'CD':
-            self.execRule = self.CD
-        elif rule == 'MCD':
-            self.execRule = self.MCD
-        elif rule == 'KKW':
-            self.execRule = self.KKW
+        if rule == '__NS':
+            self.execRule = self.__NS
+        elif rule == '__CD':
+            self.execRule = self.__CD
+        elif rule == '__MCD':
+            self.execRule = self.__MCD
+        elif rule == '__KKW':
+            self.execRule = self.__KKW
         else:
             raise KeyError('No that exec rule')
 
@@ -309,11 +309,11 @@ class ExecRoad(Road):
     def set_VE(self, switch):
         self.VEFlag = switch
 
-    #最基础的NS模型
-    def NS(self, car, nextCar, para):
+    #最基础的__NS模型
+    def __NS(self, car, nextCar, para):
         #step1:加速
         if self.TTFlag is True:
-            tempP = self.TT(car, nextCar, self.TTPt)
+            tempP = self.__TT(car, nextCar, self.TTPt)
             if tempP == None or np.random.random() < tempP:
                 car.speed = min(car.speed + car.acc, self.vmax)
 
@@ -321,7 +321,7 @@ class ExecRoad(Road):
             car.speed = min(car.speed + car.acc, self.vmax)
 
         if self.BJHFlag is True:
-            tempP = self.BJH(car.stoped, self.BJHPs)
+            tempP = self.__BJH(car.stoped, self.BJHPs)
             if np.random.random() < tempP:
                 car.speed = 0
         if self.BJHFlag or self.VDRFlag:
@@ -343,7 +343,7 @@ class ExecRoad(Road):
 
         #step3:随机慢化
         if self.VDRFlag is True:
-            tempP = self.VDR(car.stoped, self.VDRP0)
+            tempP = self.__VDR(car.stoped, self.VDRP0)
             if np.random.random() < tempP:
                 car.speed = max(car.speed - car.negacc, 0)
         elif np.random.random() < self.stableP:
@@ -354,7 +354,7 @@ class ExecRoad(Road):
         return car.speed
 
     #舒适驾驶模型
-    def CD(self, car, nextCar, next2Car):
+    def __CD(self, car, nextCar, next2Car):
         ts = min(car.speed, self.h)
         if nextCar != None:
             nextCarbn = nextCar.bn
@@ -402,8 +402,8 @@ class ExecRoad(Road):
         #step5:更新速度
         return nextv
 
-    #改进的CD模型
-    def MCD(self, car, nextCar, next2Car):
+    #改进的__CD模型
+    def __MCD(self, car, nextCar, next2Car):
         ts = min(car.speed, self.h)
         if nextCar != None:
             nextCarbn = nextCar.bn
@@ -467,7 +467,7 @@ class ExecRoad(Road):
         #step7:位置更新
         return nextv
 
-    def KKW(self, car, nextCar, para, model = KKWModel):
+    def __KKW(self, car, nextCar, para, model = KKWModel):
         #参数确定
         #paras needs:vfree,d,p0
         dn = (car.length + nextCar.length)/2 + car.safedistance
