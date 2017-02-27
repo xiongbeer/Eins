@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Takayasu-Takayasu(TT) 慢启动规则 &mdash; Eins alpha 文档</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="../genindex.html"/>
+        <link rel="search" title="搜索" href="../search.html"/>
+    <link rel="top" title="Eins alpha 文档" href="../index.html"/>
+        <link rel="up" title="数学模型及其使用" href="index.html"/>
+        <link rel="next" title="BJH 慢启动规则" href="03_BJHRule.html"/>
+        <link rel="prev" title="Nagel-Schreckenberg(NaSch) 模型" href="01_NSModel.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Eins
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../beginning/index.html">前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">数学模型及其使用</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_Assumptions.html">通用规则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_NSModel.html">Nagel-Schreckenberg(NaSch) 模型</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Takayasu-Takayasu(TT) 慢启动规则</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">数学定义</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_BJHRule.html">BJH 慢启动规则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_VDRRule.html">Velocity-dependent-randomization(VDR) 慢启动规则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_VERule.html">Velocity-effect(VE) 速度效应</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_CDModel.html">Comfortable-driving(CD) 舒适驾驶模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_MCDModel.html">Modified-comfortable-driving(MCD) 改进的舒适驾驶模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_ViewRule.html">视野规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quicklyuse/index.html">快速上手</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Eins</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">数学模型及其使用</a> &raquo;</li>
+      
+    <li>Takayasu-Takayasu(TT) 慢启动规则</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/mathmodel/02_TTRule.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="takayasu-takayasu-tt">
+<h1>Takayasu-Takayasu(TT) 慢启动规则<a class="headerlink" href="#takayasu-takayasu-tt" title="永久链接至标题">¶</a></h1>
+<table class="docutils citation" frame="void" id="ref" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Ref]</td><td><ol class="first last upperalpha simple" start="13">
+<li>Takayasu and H. Takayasu. 1/f noise in a traffic model. Fractals 1, 860~866 (1993)</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<div class="section" id="id1">
+<h2>数学定义<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>在这一模型中，如果一辆静止车辆前面恰好只有一个空元胞，那么该车以概率 q<sub>t</sub>=1-p<sub>t</sub>加速，而对其他所有情况， 车辆均按确定性规则进行加速。其他更新过程均和NS模型中的 step2 ~ step4 是完全一致的。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">实际上是依赖车辆前方空元胞数的 &#8216;空间&#8217; 规则</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="03_BJHRule.html" class="btn btn-neutral float-right" title="BJH 慢启动规则" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="01_NSModel.html" class="btn btn-neutral" title="Nagel-Schreckenberg(NaSch) 模型" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; 版权所有 2016, xiongbeer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
