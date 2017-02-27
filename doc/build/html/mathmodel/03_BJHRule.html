@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BJH 慢启动规则 &mdash; Eins alpha 文档</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="../genindex.html"/>
+        <link rel="search" title="搜索" href="../search.html"/>
+    <link rel="top" title="Eins alpha 文档" href="../index.html"/>
+        <link rel="up" title="数学模型及其使用" href="index.html"/>
+        <link rel="next" title="Velocity-dependent-randomization(VDR) 慢启动规则" href="04_VDRRule.html"/>
+        <link rel="prev" title="Takayasu-Takayasu(TT) 慢启动规则" href="02_TTRule.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Eins
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../beginning/index.html">前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">数学模型及其使用</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_Assumptions.html">通用规则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_NSModel.html">Nagel-Schreckenberg(NaSch) 模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_TTRule.html">Takayasu-Takayasu(TT) 慢启动规则</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">BJH 慢启动规则</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">数学定义</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="04_VDRRule.html">Velocity-dependent-randomization(VDR) 慢启动规则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_VERule.html">Velocity-effect(VE) 速度效应</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_CDModel.html">Comfortable-driving(CD) 舒适驾驶模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_MCDModel.html">Modified-comfortable-driving(MCD) 改进的舒适驾驶模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_ViewRule.html">视野规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quicklyuse/index.html">快速上手</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Eins</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">数学模型及其使用</a> &raquo;</li>
+      
+    <li>BJH 慢启动规则</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/mathmodel/03_BJHRule.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bjh">
+<h1>BJH 慢启动规则<a class="headerlink" href="#bjh" title="永久链接至标题">¶</a></h1>
+<table class="docutils citation" frame="void" id="ref" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Ref]</td><td><ol class="first last upperalpha simple" start="19">
+<li><ol class="first upperalpha" start="3">
+<li>Benjamin, N. F. Johnson and P. M. Hui. Cellular automaton models of traffic flow along a highway containing a junction. J. Phys. A 29, 3119~3127 (1996)</li>
+</ol>
+</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<div class="section" id="id1">
+<h2>数学定义<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>此规则也是通过引入慢启动规则对NS模型进行修正，但是其慢启动规则不同于TT规则，其演化规则如下：</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>加速：v<sub>n</sub>-&gt; min(v<sub>n</sub>+1, v<sub>max</sub>)</li>
+<li>慢启动规则：如果flag eq 1，则以概率p<sub>s</sub>，v<sub>n</sub>-&gt; 0</li>
+<li>减速：v<sub>n</sub>-&gt; min(v<sub>n</sub>, d<sub>n</sub>)</li>
+<li>随机慢化：以概率p，Vn -&gt; max(v<sub>n</sub>-1, 0)</li>
+<li>运动：x<sub>n</sub>-&gt; x<sub>n</sub>+ v<sub>n</sub></li>
+</ol>
+</div></blockquote>
+<p>这里，flag是一个标示，用来区分一辆车是采用慢启动规则(flag=1)，还是不采用(flag=0)。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">实际上是依赖车辆的 &#8216;记忆效应&#8217; 的 &#8216;时间&#8217; 规则</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="04_VDRRule.html" class="btn btn-neutral float-right" title="Velocity-dependent-randomization(VDR) 慢启动规则" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="02_TTRule.html" class="btn btn-neutral" title="Takayasu-Takayasu(TT) 慢启动规则" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; 版权所有 2016, xiongbeer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
