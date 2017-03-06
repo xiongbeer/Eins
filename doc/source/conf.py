@@ -69,7 +69,7 @@ release = u'alpha'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'zh_CN'
+# language = 'zh_CN'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -245,7 +245,7 @@ htmlhelp_basename = 'Einsdoc'
 latex_elements = {
      # The paper size ('letterpaper' or 'a4paper').
      #
-     #'papersize': 'letterpaper',
+     'papersize': 'letterpaper',
 
      # The font size ('10pt', '11pt' or '12pt').
      #
@@ -263,10 +263,10 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-#latex_documents = [
-#    (master_doc, 'Eins.tex', u'Eins Documentation',
-#     u'xiongbeer', 'manual'),
-#]
+latex_documents = [
+    (master_doc, 'Eins.tex', u'Eins Documentation',
+     u'xiongbeer', 'manual'),
+]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
