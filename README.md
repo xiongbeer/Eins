@@ -1,9 +1,10 @@
 ***
-![](./Source/logo.png)
+<center>![](./image/logo.png)</center>
 # Einspy - Simulations of Traffic System Based on the Theory of Cellular Automaton
 ***
 [![Build Status](https://travis-ci.org/xiongbeer/Eins.svg?branch=master)](https://travis-ci.org/xiongbeer/Eins)
-
+[![LICENCE](https://img.shields.io/badge/licence-MIT-blue.svg)](https://raw.githubusercontent.com/xiongbeer/Eins/master/LICENSE.txt)
+[![Docs](https://readthedocs.org/projects/veinsdocs/badge/?version=latest)](https://veinsdocs.readthedocs.io/zh_CN/latest/?badge=latest)
 ## 项目介绍
 * 道路交通流理论模型大体可分为三大类:宏观,中观,微观.  
 元胞自动机属于微观模型,是集中于单个车辆在相互作用下的个体行为描述.  
