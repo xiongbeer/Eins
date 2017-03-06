@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Eins'
-copyright = u'2016, xiongbeer'
+copyright = u'2016-2017, xiongbeer'
 author = u'xiongbeer'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -224,7 +224,7 @@ html_theme = 'sphinx_rtd_theme'
 #   'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ja'
 #   'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'tr', 'zh'
 #
-# html_search_language = 'en'
+html_search_language = 'zh'
 
 # A dictionary with options for the search language support, empty by default.
 # 'ja' uses this config value.
@@ -245,7 +245,7 @@ htmlhelp_basename = 'Einsdoc'
 latex_elements = {
      # The paper size ('letterpaper' or 'a4paper').
      #
-     # 'papersize': 'letterpaper',
+     #'papersize': 'letterpaper',
 
      # The font size ('10pt', '11pt' or '12pt').
      #
@@ -263,10 +263,10 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'Eins.tex', u'Eins Documentation',
-     u'xiongbeer', 'manual'),
-]
+#latex_documents = [
+#    (master_doc, 'Eins.tex', u'Eins Documentation',
+#     u'xiongbeer', 'manual'),
+#]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
